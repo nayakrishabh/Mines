@@ -2,35 +2,48 @@ using System.Data;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using TMPro;
 
 public class SquarePanelCreator : MonoBehaviour {
     [SerializeField]
     private RectTransform canvasTransform; // Assign your Canvas' RectTransform in the Inspector
     [SerializeField]
     private float size; // Desired size of the square panel
-    [SerializeField]
-    private GameObject buttonTile;
+    
+    
+    public static SquarePanelCreator instance;
 
-    private int tileCount = 16;
-    private GameObject panelObject;
+    
+
+    //private int tileCount = 16;
+    public static GameObject panelObject;
     private GridLayoutGroup gridLayoutGroup;
+    Color panelcolor = new Color(0f,156f,137f);
 
-    void Start() {
-        PanelCreator();
-        configuregridlayoutgroup();
-        StartCoroutine(buttontilecreator());
-    }
-
-    IEnumerator buttontilecreator() {
-        for (int i = 0; i < tileCount; i++) {
-            Instantiate(buttonTile, panelObject.transform);
-            yield return null;
+    private void Awake() {
+        if (instance == null) {
+            instance = this;
         }
     }
+    void Start() {
+        
+        PanelCreator();
+        configuregridlayoutgroup();
+
+        Tiles.instance.panelObject = panelObject;
+        Tiles.instance.startbuttoncoroutine();
+    }
+
+    
 
     void PanelCreator() {
         // Create a new GameObject with a RectTransform and Image component
         panelObject = new GameObject("SquarePanel", typeof(RectTransform), typeof(Image));
+
+        // Optional: Add color to the panel
+        panelObject.GetComponent<Image>().color = panelcolor;
+
         Vector2 anchorpoint = new Vector2(0.5f, 0.5f);
 
         gridLayoutGroup = panelObject.AddComponent<GridLayoutGroup>();
@@ -48,14 +61,11 @@ public class SquarePanelCreator : MonoBehaviour {
         panelRect.pivot = anchorpoint;
         panelRect.anchoredPosition = Vector2.zero;
 
-        // Optional: Add color to the panel
-        Image panelImage = panelObject.GetComponent<Image>();
-        panelImage.color = new Color(255f, 255f, 255f, 100f); // Change to any color you like
-
     }
 
     void configuregridlayoutgroup() {
-        gridLayoutGroup.padding = new RectOffset(8, 8, 9, 8);
+        
+        gridLayoutGroup.padding = new RectOffset(88, 8, 9, 8);
 
         // Set cell size and spacing
         gridLayoutGroup.cellSize = new Vector2(180, 180);
@@ -66,8 +76,11 @@ public class SquarePanelCreator : MonoBehaviour {
         gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
         gridLayoutGroup.childAlignment = TextAnchor.MiddleLeft;
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.Flexible;
+
     }
 
+    private void Update() {
 
+    }
 }
 
