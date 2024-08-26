@@ -31,8 +31,7 @@ public class SquarePanelCreator : MonoBehaviour {
         PanelCreator();
         configuregridlayoutgroup();
 
-        Tiles.instance.panelObject = panelObject;
-        Tiles.instance.startbuttoncoroutine();
+        Tiles.instance.startbuttoncoroutine(panelObject);
     }
 
     

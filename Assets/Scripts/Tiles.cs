@@ -23,7 +23,8 @@ public class Tiles : MonoBehaviour {
             instance = this;
         }
     }
-    public void startbuttoncoroutine() {
+    public void startbuttoncoroutine(GameObject pO) {
+        panelObject = pO;
         StartCoroutine(Buttontilecreator());
     }
     IEnumerator Buttontilecreator() {
