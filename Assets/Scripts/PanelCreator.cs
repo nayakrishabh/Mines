@@ -10,14 +10,12 @@ public class SquarePanelCreator : MonoBehaviour {
     private RectTransform canvasTransform; // Assign your Canvas' RectTransform in the Inspector
     [SerializeField]
     private float size; // Desired size of the square panel
-    
-    
+
     public static SquarePanelCreator instance;
-
-    
-
     //private int tileCount = 16;
     public static GameObject panelObject;
+
+
     private GridLayoutGroup gridLayoutGroup;
     Color panelcolor = new Color(0f,156f,137f);
 
@@ -27,11 +25,10 @@ public class SquarePanelCreator : MonoBehaviour {
         }
     }
     void Start() {
-        
         PanelCreator();
         configuregridlayoutgroup();
-
         Tiles.instance.startbuttoncoroutine(panelObject);
+        
     }
 
     
@@ -78,6 +75,7 @@ public class SquarePanelCreator : MonoBehaviour {
 
     }
 
+    
     private void Update() {
 
     }
