@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Tiles : MonoBehaviour {
     
-    public GameObject buttonTile;
+    public GameObject buttonTile, panelObject;
 
-    public GameObject panelObject;
+    public Sprite bombSprite, daimondSprite;
+
+    private int uid, noOfBomb = 10, noOfTiles = 16,clickCount = 0;
+
+    private List<GameObject> tilelist = new List<GameObject>();
 
     public static Tiles instance;
 
-    public int uid;
-    private List<GameObject> tilelist = new List<GameObject>();
-    
 
     private void Awake() {
         if (instance == null) {
@@ -24,27 +26,46 @@ public class Tiles : MonoBehaviour {
     }
 
     void Start() {
+
         for (int i = 0; i < tilelist.Count; i++) {
+
             int index = i;
             tilelist[index].GetComponent<Button>().onClick.AddListener(() => OnClick(index));
         }
+
     }
     public void startbuttoncoroutine(GameObject pO) {
         panelObject = pO;
         StartCoroutine(Buttontilecreator());
     }
+
+    public List<GameObject> getList() {
+        return tilelist;
+    }
+
+    //ButtonTILECREATOR WTIH SHUFFLING LOGIC
     IEnumerator Buttontilecreator() {
         
-        for (int i = 0; i < 10; i++) {
-            GameObject gameObject = Instantiate(buttonTile, panelObject.transform);
-            gameObject.GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
-            tilelist.Add(gameObject);
+        //Instanstiating the TileButtons
+        for (int i = 0; i < noOfBomb; i++) {
+            GameObject tileobject = Instantiate(buttonTile);
+            tileobject.GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
+            tilelist.Add(tileobject);
         }
-
-        for (int i = 0; i < 6; i++) {
-            tilelist.Add(Instantiate(buttonTile, panelObject.transform));
+        for (int i = 0; i < noOfTiles - noOfBomb; i++) {
+            tilelist.Add(Instantiate(buttonTile));
         }
-
+        //Shuffling the List
+        Shufflelist(tilelist);
+        //Setting UP Parent
+        if (panelObject.transform != null) {
+            
+            foreach (GameObject tileobject in tilelist) {
+                if (tileobject != null) { 
+                    tileobject.transform.SetParent(panelObject.transform);
+                }
+            }
+        }
         for (int i = 0; i < tilelist.Count; i++) {
             TextMeshProUGUI[] tmpComponents = tilelist[i].GetComponentsInChildren<TextMeshProUGUI>();
 
@@ -53,11 +74,34 @@ public class Tiles : MonoBehaviour {
                 tmp.enabled = false;
             }
         }
+       
         yield return null;
     }
-    void OnClick(int index) {
-        Debug.LogError("Button no = " + index);
+
+
+    public void OnClick(int index) {
+        
+            ObjectTag objectTag = tilelist[index].GetComponent<ObjectTag>();
+
+            revel(objectTag.objectType, index);
+
+            Debug.LogError("Button no = " + index + objectTag.objectType);
+        
     }
+
+    //revel Logic
+    void revel(ObjectTag.Type type, int index) {
+        if (clickCount == 0) {
+            if (type == ObjectTag.Type.BOMB) {
+                tilelist[index].GetComponent<Image>().sprite = bombSprite;
+                clickCount++;
+            }
+            else if (type == ObjectTag.Type.DAIMOND) {
+                tilelist[index].GetComponent<Image>().sprite = daimondSprite;
+            }
+        }
+    }
+    //Shuffle Logic
     List<GameObject> Shufflelist(List<GameObject> Tilelist) {
         for (int i = 0; i < (Tilelist.Count - 1); i++) {
             var r =  Random.Range(i, Tilelist.Count);
@@ -66,5 +110,20 @@ public class Tiles : MonoBehaviour {
             Tilelist[r] = temp;
         }
         return Tilelist;
+    }
+
+    void Update() {
+
+        if (clickCount > 0) {
+            Time.timeScale = 0f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SceneManager.LoadScene(0);
+        }
+
+        if (Input.GetButtonDown("Restart")) {
+            SceneManager.LoadScene(0);
+        }
     }
 }

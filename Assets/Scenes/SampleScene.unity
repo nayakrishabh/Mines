@@ -345,7 +345,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonTile: {fileID: 8077795610582032888, guid: 7109811b4b16c3f4da7e4eed0f1a39e3, type: 3}
   panelObject: {fileID: 0}
-  uid: 0
+  bombSprite: {fileID: 21300000, guid: 4a2b0538a32831e4bb3c223e9b63c5c0, type: 3}
+  daimondSprite: {fileID: 21300000, guid: 9f4f3cdc4eeba0c4e95c4f586c096e6a, type: 3}
 --- !u!1 &1152660678
 GameObject:
   m_ObjectHideFlags: 0
