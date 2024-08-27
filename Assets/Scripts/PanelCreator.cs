@@ -9,7 +9,9 @@ public class SquarePanelCreator : MonoBehaviour {
     [SerializeField]
     private RectTransform canvasTransform; // Assign your Canvas' RectTransform in the Inspector
     [SerializeField]
-    private float size; // Desired size of the square panel
+    private float centerSize;
+    [SerializeField]
+    private Vector2 rightPanelSize; // Desired size of the square panel
 
     public static SquarePanelCreator instance;
     //private int tileCount = 16;
@@ -17,7 +19,7 @@ public class SquarePanelCreator : MonoBehaviour {
 
 
     private GridLayoutGroup gridLayoutGroup;
-    Color panelcolor = new Color(0f,156f,137f);
+    Color panelcolor = new Color(0f,0f,0f,255f);
 
     private void Awake() {
         if (instance == null) {
@@ -26,6 +28,7 @@ public class SquarePanelCreator : MonoBehaviour {
     }
     void Start() {
         PanelCreator();
+        CreateRightPanel();
         configuregridlayoutgroup();
         Tiles.instance.startbuttoncoroutine(panelObject);
         
@@ -49,7 +52,7 @@ public class SquarePanelCreator : MonoBehaviour {
         panelRect.SetParent(canvasTransform, false);
 
         // Set the size of the panel
-        panelRect.sizeDelta = new Vector2(size, size);
+        panelRect.sizeDelta = new Vector2(centerSize, centerSize);
 
         // Center the panel and make it maintain a square aspect ratio
         panelRect.anchorMin = anchorpoint;
@@ -57,6 +60,27 @@ public class SquarePanelCreator : MonoBehaviour {
         panelRect.pivot = anchorpoint;
         panelRect.anchoredPosition = Vector2.zero;
 
+    }
+
+    void CreateRightPanel() {
+        // Create the new panel to the right of the center panel
+        GameObject rightPanel = new GameObject("RightPanel", typeof(RectTransform), typeof(Image));
+        rightPanel.GetComponent<Image>().color = panelcolor;
+
+        // Set the panel's parent to be the Canvas
+        RectTransform rightPanelRect = rightPanel.GetComponent<RectTransform>();
+        rightPanelRect.SetParent(canvasTransform, false);
+
+        // Set the size of the right panel (same as the original panel)
+        rightPanelRect.sizeDelta = rightPanelSize;
+
+        // Position the right panel based on the size of the original panel
+        rightPanelRect.anchorMin = new Vector2(0.5f, 0.5f); // Anchored at the center
+        rightPanelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        rightPanelRect.pivot = new Vector2(0.5f, 0.5f);
+
+        // Offset the position to move it to the right of the original panel
+        rightPanelRect.anchoredPosition = new Vector2(740f, 0f);
     }
 
     void configuregridlayoutgroup() {

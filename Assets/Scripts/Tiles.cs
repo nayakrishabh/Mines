@@ -121,9 +121,5 @@ public class Tiles : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(0);
         }
-
-        if (Input.GetButtonDown("Restart")) {
-            SceneManager.LoadScene(0);
-        }
     }
 }
