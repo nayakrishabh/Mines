@@ -16,9 +16,12 @@ public class SquarePanelCreator : MonoBehaviour {
     public static SquarePanelCreator instance;
     //private int tileCount = 16;
     public static GameObject panelObject;
+    public static GameObject rightPanel;
+
 
 
     private GridLayoutGroup gridLayoutGroup;
+    private VerticalLayoutGroup verticalLayoutGroup;
     Color panelcolor = new Color(0f,0f,0f,255f);
 
     private void Awake() {
@@ -29,9 +32,8 @@ public class SquarePanelCreator : MonoBehaviour {
     void Start() {
         PanelCreator();
         CreateRightPanel();
-        configuregridlayoutgroup();
         Tiles.instance.startbuttoncoroutine(panelObject);
-        
+        UiManager.instance.createBLocks(rightPanel);
     }
 
     
@@ -60,12 +62,15 @@ public class SquarePanelCreator : MonoBehaviour {
         panelRect.pivot = anchorpoint;
         panelRect.anchoredPosition = Vector2.zero;
 
+        configuregridlayoutgroup();
     }
 
     void CreateRightPanel() {
         // Create the new panel to the right of the center panel
-        GameObject rightPanel = new GameObject("RightPanel", typeof(RectTransform), typeof(Image));
+        rightPanel = new GameObject("RightPanel", typeof(RectTransform), typeof(Image));
         rightPanel.GetComponent<Image>().color = panelcolor;
+
+        verticalLayoutGroup = rightPanel.AddComponent<VerticalLayoutGroup>();
 
         // Set the panel's parent to be the Canvas
         RectTransform rightPanelRect = rightPanel.GetComponent<RectTransform>();
@@ -81,6 +86,8 @@ public class SquarePanelCreator : MonoBehaviour {
 
         // Offset the position to move it to the right of the original panel
         rightPanelRect.anchoredPosition = new Vector2(740f, 0f);
+
+        configVerticalLayoutGroup();
     }
 
     void configuregridlayoutgroup() {
@@ -99,6 +106,16 @@ public class SquarePanelCreator : MonoBehaviour {
 
     }
 
+    void configVerticalLayoutGroup() {
+        verticalLayoutGroup.padding = new RectOffset(0,0,0,0);
+
+        verticalLayoutGroup.spacing = -330f;
+        verticalLayoutGroup.childAlignment= TextAnchor.MiddleCenter;
+        verticalLayoutGroup.childControlHeight = false;
+        verticalLayoutGroup.childControlWidth = false;
+        verticalLayoutGroup.childScaleHeight = true;
+        verticalLayoutGroup.childScaleWidth = true;
+    }
     
     private void Update() {
 

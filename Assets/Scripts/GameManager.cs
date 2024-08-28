@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    
+    private int balance = 100000;
 
 
     private void Awake() {
@@ -21,7 +21,9 @@ public class GameManager : MonoBehaviour
         
         
     }
-    
+    public int getbalance() {
+        return balance;
+    }
     // Update is called once per frame
     void Update()
     {
