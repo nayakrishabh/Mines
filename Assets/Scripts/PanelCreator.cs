@@ -90,6 +90,7 @@ public class SquarePanelCreator : MonoBehaviour {
         configVerticalLayoutGroup();
     }
 
+    #region LayoutConfigurations
     void configuregridlayoutgroup() {
         
         gridLayoutGroup.padding = new RectOffset(88, 8, 9, 8);
@@ -116,7 +117,8 @@ public class SquarePanelCreator : MonoBehaviour {
         verticalLayoutGroup.childScaleHeight = true;
         verticalLayoutGroup.childScaleWidth = true;
     }
-    
+
+    #endregion
     private void Update() {
 
     }
