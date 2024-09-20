@@ -158,7 +158,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 0.028702382, g: 0.06959495, b: 0.14150941, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -229,6 +229,7 @@ GameObject:
   - component: {fileID: 722242660}
   - component: {fileID: 722242661}
   - component: {fileID: 722242662}
+  - component: {fileID: 722242663}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -331,8 +332,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasTransform: {fileID: 722242659}
-  centerSize: 1000
-  rightPanelSize: {x: 360, y: 1080}
 --- !u!114 &722242661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,8 +346,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonTile: {fileID: 8077795610582032888, guid: 7109811b4b16c3f4da7e4eed0f1a39e3, type: 3}
   panelObject: {fileID: 0}
-  bombSprite: {fileID: 21300000, guid: f7a8c29819678b742b76fc3dcfb49ebe, type: 3}
-  daimondSprite: {fileID: 21300000, guid: b1dcde845edd6c04b8e45a4bcf9d4108, type: 3}
+  bombSprite: {fileID: 21300000, guid: 4903130a73700084fa9fbac6c39742a1, type: 3}
+  daimondSprite: {fileID: 21300000, guid: 9b647216e2bdd5740b19cff4aa7132b5, type: 3}
 --- !u!114 &722242662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,6 +361,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   containers: {fileID: 2316667737910575478, guid: b33cde49d4543d0408094798ba00f946, type: 3}
+--- !u!114 &722242663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722242655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4762de864efc9c942bc55e5eb29b67db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1152660678
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,6 @@ public class UiManager : MonoBehaviour
     private int balance;
 
     public static UiManager instance;
-    private GameManager gameManager;
     private List<GameObject> containersList;
 
     private void Awake() {
@@ -23,7 +22,6 @@ public class UiManager : MonoBehaviour
             Destroy(gameObject);  // To ensure singleton behavior
         }
         containersList = new List<GameObject>();
-        gameManager = GameManager.instance;
     }
     public void createBLocks(GameObject rP) {
         StartCoroutine(createBlocks(rP));
@@ -36,7 +34,7 @@ public class UiManager : MonoBehaviour
         for (int i = 0; i < count; i++) {
             GameObject container = Instantiate(containers, parentTransform);
             RectTransform rectTransform = container.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(320f, 90f);
+            rectTransform.sizeDelta = new Vector2(320f, 122f);
             containersList.Add(container);
         }
         blockConfigurator();
@@ -51,7 +49,7 @@ public class UiManager : MonoBehaviour
             switch (i) {
 
                 case 0:
-                    textAdder(blocktransform,"Balance : " );
+                    textAdder(blocktransform,$"Balance : \n {GameManager.instance.getbalance()}" );
                     break;
                 case 1:
                     break;
@@ -79,11 +77,10 @@ public class UiManager : MonoBehaviour
 
         // Configure the RectTransform of the TextMeshPro
         RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.sizeDelta = new Vector2(290f,50f); // Match the size of the Image
-        textRect.anchorMin = new Vector2(0, 0);
-        textRect.anchorMax = new Vector2(1, 1);
+        Debug.Log(textRect.sizeDelta);
         textRect.pivot = new Vector2(0.5f, 0.5f);
         textRect.anchoredPosition = Vector2.zero;
+        textRect.sizeDelta = new Vector2(320f, 100f); // Match the size of the Image
 
         // Configure the TextMeshProUGUI component
         TextMeshProUGUI tmp = textObject.GetComponent<TextMeshProUGUI>();

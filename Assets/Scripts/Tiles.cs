@@ -63,6 +63,7 @@ public class Tiles : MonoBehaviour {
             foreach (GameObject tileobject in tilelist) {
                 if (tileobject != null) { 
                     tileobject.transform.SetParent(panelObject.transform);
+                    tileobject.transform.localScale = Vector3.one;
                 }
             }
         }
@@ -111,7 +112,6 @@ public class Tiles : MonoBehaviour {
         }
         return Tilelist;
     }
-
     void Update() {
 
         if (clickCount > 0) {

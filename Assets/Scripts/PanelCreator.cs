@@ -8,11 +8,7 @@ using TMPro;
 public class SquarePanelCreator : MonoBehaviour {
     [SerializeField]
     private RectTransform canvasTransform; // Assign your Canvas' RectTransform in the Inspector
-    [SerializeField]
-    private float centerSize;
-    [SerializeField]
-    private Vector2 rightPanelSize; // Desired size of the square panel
-
+    
     public static SquarePanelCreator instance;
     //private int tileCount = 16;
     public static GameObject panelObject;
@@ -22,7 +18,7 @@ public class SquarePanelCreator : MonoBehaviour {
 
     private GridLayoutGroup gridLayoutGroup;
     private VerticalLayoutGroup verticalLayoutGroup;
-    Color panelcolor = new Color(0f,0f,0f,255f);
+    Color panelcolor = new Color(0f,0f,0f,0f);
 
     private void Awake() {
         if (instance == null) {
@@ -45,7 +41,9 @@ public class SquarePanelCreator : MonoBehaviour {
         // Optional: Add color to the panel
         panelObject.GetComponent<Image>().color = panelcolor;
 
-        Vector2 anchorpoint = new Vector2(0.5f, 0.5f);
+        Vector2 anchorpointmin = new Vector2(0.24f, 0.08f);
+        Vector2 anchorpointmax = new Vector2(0.76f, 0.92f);
+        Vector2 pivotPoint = new Vector2(0.5f, 0.5f);
 
         gridLayoutGroup = panelObject.AddComponent<GridLayoutGroup>();
 
@@ -54,12 +52,12 @@ public class SquarePanelCreator : MonoBehaviour {
         panelRect.SetParent(canvasTransform, false);
 
         // Set the size of the panel
-        panelRect.sizeDelta = new Vector2(centerSize, centerSize);
+        panelRect.sizeDelta = Vector2.zero;
 
         // Center the panel and make it maintain a square aspect ratio
-        panelRect.anchorMin = anchorpoint;
-        panelRect.anchorMax = anchorpoint;
-        panelRect.pivot = anchorpoint;
+        panelRect.anchorMin = anchorpointmin;
+        panelRect.anchorMax = anchorpointmax;
+        panelRect.pivot = pivotPoint;
         panelRect.anchoredPosition = Vector2.zero;
 
         configuregridlayoutgroup();
@@ -77,15 +75,15 @@ public class SquarePanelCreator : MonoBehaviour {
         rightPanelRect.SetParent(canvasTransform, false);
 
         // Set the size of the right panel (same as the original panel)
-        rightPanelRect.sizeDelta = rightPanelSize;
+        rightPanelRect.sizeDelta = Vector2.zero;
 
         // Position the right panel based on the size of the original panel
-        rightPanelRect.anchorMin = new Vector2(0.5f, 0.5f); // Anchored at the center
-        rightPanelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        rightPanelRect.anchorMin = new Vector2(0.78f, 0f); // Anchored at the center
+        rightPanelRect.anchorMax = new Vector2(0.98f, 1f);
         rightPanelRect.pivot = new Vector2(0.5f, 0.5f);
 
         // Offset the position to move it to the right of the original panel
-        rightPanelRect.anchoredPosition = new Vector2(740f, 0f);
+        rightPanelRect.anchoredPosition = Vector2.zero;
 
         configVerticalLayoutGroup();
     }
@@ -93,7 +91,7 @@ public class SquarePanelCreator : MonoBehaviour {
     #region LayoutConfigurations
     void configuregridlayoutgroup() {
         
-        gridLayoutGroup.padding = new RectOffset(88, 8, 9, 8);
+        gridLayoutGroup.padding = new RectOffset(0,0,0,0);
 
         // Set cell size and spacing
         gridLayoutGroup.cellSize = new Vector2(180, 180);
@@ -102,7 +100,7 @@ public class SquarePanelCreator : MonoBehaviour {
         // Set alignment and layout constraints
         gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
         gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
-        gridLayoutGroup.childAlignment = TextAnchor.MiddleLeft;
+        gridLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.Flexible;
 
     }
@@ -110,7 +108,7 @@ public class SquarePanelCreator : MonoBehaviour {
     void configVerticalLayoutGroup() {
         verticalLayoutGroup.padding = new RectOffset(0,0,0,0);
 
-        verticalLayoutGroup.spacing = -330f;
+        verticalLayoutGroup.spacing = -88f;
         verticalLayoutGroup.childAlignment= TextAnchor.MiddleCenter;
         verticalLayoutGroup.childControlHeight = false;
         verticalLayoutGroup.childControlWidth = false;
