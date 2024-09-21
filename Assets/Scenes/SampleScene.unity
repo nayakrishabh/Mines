@@ -332,6 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasTransform: {fileID: 722242659}
+  UIPanel: {fileID: 9004256791760917330, guid: bd9d23c9d4586724abc1a84176277be8, type: 3}
 --- !u!114 &722242661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,7 +361,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07476bc87b25b3a468f42a9e4c5dd5a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containers: {fileID: 2316667737910575478, guid: b33cde49d4543d0408094798ba00f946, type: 3}
 --- !u!114 &722242663
 MonoBehaviour:
   m_ObjectHideFlags: 0
