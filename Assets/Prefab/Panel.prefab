@@ -943,12 +943,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 55
+  m_fontSize: 30
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 55
+  m_fontSizeMax: 30
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1363,12 +1363,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 55
+  m_fontSize: 30
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 55
+  m_fontSizeMax: 30
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1713,6 +1713,8 @@ GameObject:
   - component: {fileID: 120760878444076706}
   - component: {fileID: 1323646017283371999}
   - component: {fileID: 5005380588539179106}
+  - component: {fileID: 4837716526874673942}
+  - component: {fileID: 6625628478822272352}
   m_Layer: 0
   m_Name: Panel
   m_TagString: Untagged
@@ -1809,3 +1811,34 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &4837716526874673942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123018495147745121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e98c8f3c16f37634494983fa4702df31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connector: {fileID: 6625628478822272352}
+--- !u!114 &6625628478822272352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123018495147745121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dba66b6eab41df4cb9f46995328e83c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  balanceText: {fileID: 3496122366434509877}
+  winsText: {fileID: 5574179030043117029}
+  plusButton: {fileID: 5206652415517029465}
+  minusButton: {fileID: 2200697199810870477}
+  BetAmountInput: {fileID: 1219135470144191211}
+  betButton: {fileID: 6748613378402974575}

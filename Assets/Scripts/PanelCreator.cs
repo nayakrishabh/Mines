@@ -10,6 +10,8 @@ public class PanelCreator : MonoBehaviour {
     private RectTransform canvasTransform; // Assign your Canvas' RectTransform in the Inspector
     [SerializeField]
     private GameObject UIPanel;
+    [SerializeField]
+    private GameObject startPanelRef;
     
     public static PanelCreator instance;
     //private int tileCount = 16;
@@ -17,7 +19,7 @@ public class PanelCreator : MonoBehaviour {
     public static GameObject rightPanel;
 
 
-
+    private GameObject startPanel;
     private GridLayoutGroup gridLayoutGroup;
     private VerticalLayoutGroup verticalLayoutGroup;
     Color panelcolor = new Color(0f,0f,0f,0f);
@@ -52,7 +54,8 @@ public class PanelCreator : MonoBehaviour {
         // Set the panel's parent to be the Canvas
         RectTransform panelRect = panelObject.GetComponent<RectTransform>();
         panelRect.SetParent(canvasTransform, false);
-
+        startPanel = Instantiate(startPanelRef, canvasTransform);
+        startPanel.transform.SetAsLastSibling();
         // Set the size of the panel
         panelRect.sizeDelta = Vector2.zero;
 
@@ -125,6 +128,9 @@ public class PanelCreator : MonoBehaviour {
     }
     public GameObject getUiPanel() {
         return UIPanel;
+    }
+    public GameObject getStartPanel() {
+        return startPanel;
     }
 }
 

@@ -10,7 +10,7 @@ public class Tiles : MonoBehaviour {
     
     public GameObject buttonTile, panelObject;
 
-    public Sprite bombSprite, daimondSprite;
+    public Sprite bombSprite, daimondSprite,tileSprite;
 
     private int uid, noOfBomb = 10, noOfTiles = 16,clickCount = 0;
 
@@ -59,7 +59,6 @@ public class Tiles : MonoBehaviour {
         Shufflelist(tilelist);
         //Setting UP Parent
         if (panelObject.transform != null) {
-            
             foreach (GameObject tileobject in tilelist) {
                 if (tileobject != null) { 
                     tileobject.transform.SetParent(panelObject.transform);
@@ -69,13 +68,10 @@ public class Tiles : MonoBehaviour {
         }
         for (int i = 0; i < tilelist.Count; i++) {
             TextMeshProUGUI[] tmpComponents = tilelist[i].GetComponentsInChildren<TextMeshProUGUI>();
-
-            // Disable each TextMeshProUGUI component
             foreach (TextMeshProUGUI tmp in tmpComponents) {
                 tmp.enabled = false;
             }
         }
-       
         yield return null;
     }
 
@@ -86,7 +82,7 @@ public class Tiles : MonoBehaviour {
 
             revel(objectTag.objectType, index);
 
-            Debug.LogError("Button no = " + index + objectTag.objectType);
+            Debug.LogError("Button no = " + index +" "+ objectTag.objectType);
         
     }
 
@@ -99,6 +95,14 @@ public class Tiles : MonoBehaviour {
             }
             else if (type == ObjectTag.Type.DAIMOND) {
                 tilelist[index].GetComponent<Image>().sprite = daimondSprite;
+            }
+        }
+        tilelist[index].GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
+    }
+    void hidetiles() {
+        foreach (GameObject gameObject in tilelist) {
+            if (gameObject.GetComponent<ObjectTag>().revelType == ObjectTag.RevelType.REVELED) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
             }
         }
     }
@@ -116,6 +120,7 @@ public class Tiles : MonoBehaviour {
 
         if (clickCount > 0) {
             Time.timeScale = 0f;
+            UIController.Instance.onUIButton();
         }
 
         if (Input.GetKeyDown(KeyCode.R)) {
