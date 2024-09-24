@@ -12,7 +12,7 @@ public class Tiles : MonoBehaviour {
 
     public Sprite bombSprite, daimondSprite,tileSprite;
 
-    private int uid, noOfBomb = 10, noOfTiles = 16,clickCount = 0;
+    private int uid, noOfBomb = 1, noOfTiles = 16,clickCount = 0;
 
     private List<GameObject> tilelist = new List<GameObject>();
 
@@ -26,26 +26,38 @@ public class Tiles : MonoBehaviour {
     }
 
     void Start() {
+    }
+    void Update() {
 
-        for (int i = 0; i < tilelist.Count; i++) {
-
-            int index = i;
-            tilelist[index].GetComponent<Button>().onClick.AddListener(() => OnClick(index));
+        if (clickCount > 0) {
+            foreach (GameObject gameObject in tilelist) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+            UIController.Instance.onUIButton();
         }
 
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SceneManager.LoadScene(0);
+        }
     }
+
     public void startbuttoncoroutine(GameObject pO) {
         panelObject = pO;
         StartCoroutine(Buttontilecreator());
     }
+    public void gameReset() {
+        destroyTiles();
+        StartCoroutine(GameResetCoroutine());
+    }
 
-    public List<GameObject> getList() {
-        return tilelist;
+    private IEnumerator GameResetCoroutine() {
+        yield return StartCoroutine(Buttontilecreator());
+        AddListeners();
     }
 
     //ButtonTILECREATOR WTIH SHUFFLING LOGIC
     IEnumerator Buttontilecreator() {
-        
+        tilelist.Clear();
         //Instanstiating the TileButtons
         for (int i = 0; i < noOfBomb; i++) {
             GameObject tileobject = Instantiate(buttonTile);
@@ -72,10 +84,16 @@ public class Tiles : MonoBehaviour {
                 tmp.enabled = false;
             }
         }
+        AddListeners();
         yield return null;
     }
-
-
+    private void AddListeners() {
+        for (int i = 0; i < tilelist.Count; i++) {
+            int index = i; // Prevent closure issue
+            tilelist[index].GetComponent<Button>().onClick.RemoveAllListeners();
+            tilelist[index].GetComponent<Button>().onClick.AddListener(() => OnClick(index));
+        }
+    }
     public void OnClick(int index) {
         
             ObjectTag objectTag = tilelist[index].GetComponent<ObjectTag>();
@@ -85,9 +103,15 @@ public class Tiles : MonoBehaviour {
             Debug.LogError("Button no = " + index +" "+ objectTag.objectType);
         
     }
-
+    private void destroyTiles() {
+        foreach (GameObject tileobject in tilelist) {
+            Destroy(tileobject);
+        }
+        tilelist.Clear();
+        clickCount = 0;
+    }
     //revel Logic
-    void revel(ObjectTag.Type type, int index) {
+    private void revel(ObjectTag.Type type, int index) {
         if (clickCount == 0) {
             if (type == ObjectTag.Type.BOMB) {
                 tilelist[index].GetComponent<Image>().sprite = bombSprite;
@@ -99,15 +123,8 @@ public class Tiles : MonoBehaviour {
         }
         tilelist[index].GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
     }
-    void hidetiles() {
-        foreach (GameObject gameObject in tilelist) {
-            if (gameObject.GetComponent<ObjectTag>().revelType == ObjectTag.RevelType.REVELED) {
-                gameObject.GetComponent<Image>().sprite = tileSprite;
-            }
-        }
-    }
     //Shuffle Logic
-    List<GameObject> Shufflelist(List<GameObject> Tilelist) {
+    private List<GameObject> Shufflelist(List<GameObject> Tilelist) {
         for (int i = 0; i < (Tilelist.Count - 1); i++) {
             var r =  Random.Range(i, Tilelist.Count);
             var temp = Tilelist[i];
@@ -116,15 +133,18 @@ public class Tiles : MonoBehaviour {
         }
         return Tilelist;
     }
-    void Update() {
-
-        if (clickCount > 0) {
-            Time.timeScale = 0f;
-            UIController.Instance.onUIButton();
-        }
-
-        if (Input.GetKeyDown(KeyCode.R)) {
-            SceneManager.LoadScene(0);
-        }
+    
+    public List<GameObject> getList() {
+        return tilelist;
     }
+
 }
+//public void hidetiles() {
+//    foreach (GameObject gameObject in tilelist) {
+//        if (gameObject.GetComponent<ObjectTag>().revelType == ObjectTag.RevelType.REVELED) {
+//            gameObject.GetComponent<Image>().sprite = tileSprite;
+//            gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+//            clickCount = 0;
+//        }
+//    }
+//}

@@ -158,7 +158,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.028702382, g: 0.06959495, b: 0.14150941, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -332,6 +332,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canvasTransform: {fileID: 722242659}
   UIPanel: {fileID: 8123018495147745121, guid: bc2fd77b1ff4baf49bad93ae09f57d82, type: 3}
+  selectionPanel: {fileID: 796030056813282283, guid: 790b1723ed8c7b1489454d0f5a57c37c, type: 3}
   startPanelRef: {fileID: 4486239136875718330, guid: 3016aa0ae5e7bdb4fbe8a4eaa47747df, type: 3}
 --- !u!114 &722242661
 MonoBehaviour:

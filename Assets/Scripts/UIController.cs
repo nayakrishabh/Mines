@@ -32,7 +32,7 @@ public class UIController : MonoBehaviour
     }
 
     private void applyBet() {
-        //Tiles.instance.hidetiles();
+        Tiles.instance.gameReset();
         offUIButton();
         GameManager.instance.setbalance(-betAmount);
     }

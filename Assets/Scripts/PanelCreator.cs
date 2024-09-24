@@ -11,18 +11,22 @@ public class PanelCreator : MonoBehaviour {
     [SerializeField]
     private GameObject UIPanel;
     [SerializeField]
+    private GameObject selectionPanel;
+    [SerializeField]
     private GameObject startPanelRef;
     
     public static PanelCreator instance;
     //private int tileCount = 16;
     public static GameObject panelObject;
     public static GameObject rightPanel;
+    public static GameObject leftPanel;
 
 
     private GameObject startPanel;
     private GridLayoutGroup gridLayoutGroup;
     private VerticalLayoutGroup verticalLayoutGroup;
-    Color panelcolor = new Color(0f,0f,0f,0f);
+    private Color panelcolor = new Color(0f,0f,0f,0f);
+    private Color leftPanelColor = new Color(19.0f / 255.0f, 19.0f / 255.0f, 19.0f / 255.0f, 233.0f / 255.0f);
 
     private void Awake() {
         if (instance == null) {
@@ -32,13 +36,13 @@ public class PanelCreator : MonoBehaviour {
     void Start() {
         PanelCreators();
         CreateRightPanel();
+        CreateleftPanel();
         Tiles.instance.startbuttoncoroutine(panelObject);
-        //UiManager.instance.createBLocks(rightPanel);
     }
 
     
 
-    void PanelCreators() {
+    private void PanelCreators() {
         // Create a new GameObject with a RectTransform and Image component
         panelObject = new GameObject("SquarePanel", typeof(RectTransform), typeof(Image));
 
@@ -67,8 +71,7 @@ public class PanelCreator : MonoBehaviour {
 
         configuregridlayoutgroup();
     }
-
-    void CreateRightPanel() {
+    private void CreateRightPanel() {
         // Create the new panel to the right of the center panel
         rightPanel = new GameObject("RightPanel", typeof(RectTransform), typeof(Image));
         rightPanel.GetComponent<Image>().color = panelcolor;
@@ -93,9 +96,33 @@ public class PanelCreator : MonoBehaviour {
 
         //configVerticalLayoutGroup();
     }
+    private void CreateleftPanel() {
+        // Create the new panel to the right of the center panel
+        leftPanel = new GameObject("leftPanel", typeof(RectTransform), typeof(Image));
+        leftPanel.GetComponent<Image>().color = leftPanelColor;
 
+        //verticalLayoutGroup = rightPanel.AddComponent<VerticalLayoutGroup>();
+
+        // Set the panel's parent to be the Canvas
+        RectTransform leftPanelRect = leftPanel.GetComponent<RectTransform>();
+        leftPanelRect.SetParent(canvasTransform, false);
+
+        Instantiate(selectionPanel, leftPanelRect);
+        // Set the size of the right panel (same as the original panel)
+        leftPanelRect.sizeDelta = Vector2.zero;
+
+        // Position the right panel based on the size of the original panel
+        leftPanelRect.anchorMin = new Vector2(0.026f, 0f); // Anchored at the center
+        leftPanelRect.anchorMax = new Vector2(0.222f, 1f);
+        leftPanelRect.pivot = new Vector2(0.5f, 0.5f);
+
+        // Offset the position to move it to the right of the original panel
+        leftPanelRect.anchoredPosition = Vector2.zero;
+
+        //configVerticalLayoutGroup();
+    }
     #region LayoutConfigurations
-    void configuregridlayoutgroup() {
+    private void configuregridlayoutgroup() {
         
         gridLayoutGroup.padding = new RectOffset(0,0,0,0);
 
