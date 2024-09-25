@@ -34,9 +34,9 @@ public class PanelCreator : MonoBehaviour {
         }
     }
     void Start() {
+        CreateleftPanel();
         PanelCreators();
         CreateRightPanel();
-        CreateleftPanel();
         Tiles.instance.startbuttoncoroutine(panelObject);
     }
 
@@ -123,12 +123,15 @@ public class PanelCreator : MonoBehaviour {
     }
     #region LayoutConfigurations
     private void configuregridlayoutgroup() {
-        
+
+        Vector2 cellSize = GetCellSize(SelectionUIController.instance.SelectedGridSize);
+        Vector2 spaceing = GetSpacing(SelectionUIController.instance.SelectedGridSize);
+
         gridLayoutGroup.padding = new RectOffset(0,0,0,0);
 
         // Set cell size and spacing
-        gridLayoutGroup.cellSize = new Vector2(180, 180);
-        gridLayoutGroup.spacing = new Vector2(30, 30);
+        gridLayoutGroup.cellSize = cellSize;
+        gridLayoutGroup.spacing = spaceing;
 
         // Set alignment and layout constraints
         gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
@@ -137,6 +140,78 @@ public class PanelCreator : MonoBehaviour {
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.Flexible;
 
     }
+
+    public void OnGridSizeChanged() {
+        configuregridlayoutgroup();
+    }
+
+
+    //private Vector2 getcellSize(Vector2Int gridS) {
+
+    //    Vector2 selected = new Vector2(180,180);
+
+    //    if (gridS == new Vector2(3, 3)) {
+    //        selected = new Vector2(250, 250);
+    //    }
+    //    else if (gridS == new Vector2(5, 5)) {
+    //        selected = new Vector2(150, 150);
+    //    }
+    //    else if (gridS == new Vector2(7, 7)) {
+    //        selected = new Vector2(105, 105);
+    //    }
+    //    else if (gridS == new Vector2(9, 9)) {
+    //        selected = new Vector2(84, 84);
+    //    }
+
+    //    return selected;
+    //}
+
+    //private Vector2 getpacing(Vector2Int gridS) {
+
+    //    Vector2 selected = new Vector2(30, 30);
+
+    //    if (gridS == new Vector2(3, 3)) {
+    //        return selected;
+    //    }
+    //    else if (gridS == new Vector2(5, 5)) {
+    //        return selected;
+    //    }
+    //    else if (gridS == new Vector2(7, 7)) {
+    //        selected = new Vector2(25, 25);
+    //    }
+    //    else if (gridS == new Vector2(9, 9)) {
+    //        selected = new Vector2(18, 18);
+    //    }
+
+    //    return selected;
+    //}
+    // Optimized version of getcellSize
+
+    private Vector2 GetCellSize(Vector2Int gridSize) {
+
+        Dictionary<Vector2Int, Vector2> cellSizes = new Dictionary<Vector2Int, Vector2>() {
+        { new Vector2Int(3, 3), new Vector2(250, 250) },
+        { new Vector2Int(5, 5), new Vector2(150, 150) },
+        { new Vector2Int(7, 7), new Vector2(105, 105) },
+        { new Vector2Int(9, 9), new Vector2(84, 84) }
+        };
+
+        return cellSizes.TryGetValue(gridSize, out Vector2 cellSize) ? cellSize : new Vector2(180, 180);
+    }
+
+    private Vector2 GetSpacing(Vector2Int gridSize) {
+
+        Dictionary<Vector2Int, Vector2> spacingSizes = new Dictionary<Vector2Int, Vector2>() {
+        { new Vector2Int(3, 3), new Vector2(30, 30) },
+        { new Vector2Int(5, 5), new Vector2(30, 30) },
+        { new Vector2Int(7, 7), new Vector2(25, 25) },
+        { new Vector2Int(9, 9), new Vector2(18, 18) }
+        };
+
+        return spacingSizes.TryGetValue(gridSize, out Vector2 spacingSize) ? spacingSize : new Vector2(30, 30);
+    }
+
+
 
     //void configVerticalLayoutGroup() {
     //    verticalLayoutGroup.padding = new RectOffset(0,0,0,0);
@@ -151,13 +226,15 @@ public class PanelCreator : MonoBehaviour {
 
     #endregion
     private void Update() {
-
     }
     public GameObject getUiPanel() {
         return UIPanel;
     }
     public GameObject getStartPanel() {
         return startPanel;
+    }
+    public GameObject getpanelobject() {
+        return panelObject;
     }
 }
 

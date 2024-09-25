@@ -35,6 +35,7 @@ public class UIController : MonoBehaviour
         Tiles.instance.gameReset();
         offUIButton();
         GameManager.instance.setbalance(-betAmount);
+        Tiles.instance.tileActive();
     }
 
     #region INPUT HANDLER
@@ -83,11 +84,13 @@ public class UIController : MonoBehaviour
         connector.minusButton.GetComponent<Button>().interactable = false;
         connector.BetAmountInput.interactable = false;
         connector.betButton.interactable=false;
+        SelectionUIController.instance.setUIOff();
     }
     public void onUIButton() {
         connector.plusButton.GetComponent<Button>().interactable = true;
         connector.minusButton.GetComponent<Button>().interactable = true;
         connector.BetAmountInput.interactable = true;
         connector.betButton.interactable = true;
+        SelectionUIController.instance.setUIOn();
     }
 }

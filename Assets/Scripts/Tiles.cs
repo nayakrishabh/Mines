@@ -12,7 +12,7 @@ public class Tiles : MonoBehaviour {
 
     public Sprite bombSprite, daimondSprite,tileSprite;
 
-    private int uid, noOfBomb = 1, noOfTiles = 16,clickCount = 0;
+    private int uid, noOfBomb = 1, noOfTiles,clickCount = 0;
 
     private List<GameObject> tilelist = new List<GameObject>();
 
@@ -26,8 +26,12 @@ public class Tiles : MonoBehaviour {
     }
 
     void Start() {
+        noOfBomb = SelectionUIController.instance.SelectedBombCount;
+        int sqL = SelectionUIController.instance.SelectedGridSize.x;
+        noOfTiles = sqL*sqL;
     }
     void Update() {
+        noOfBomb = SelectionUIController.instance.SelectedBombCount;
 
         if (clickCount > 0) {
             foreach (GameObject gameObject in tilelist) {
@@ -62,10 +66,13 @@ public class Tiles : MonoBehaviour {
         for (int i = 0; i < noOfBomb; i++) {
             GameObject tileobject = Instantiate(buttonTile);
             tileobject.GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
+            tileobject.GetComponent<Button>().interactable=false;
             tilelist.Add(tileobject);
         }
         for (int i = 0; i < noOfTiles - noOfBomb; i++) {
-            tilelist.Add(Instantiate(buttonTile));
+            GameObject tileobject = Instantiate(buttonTile);
+            tileobject.GetComponent<Button>().interactable = false;
+            tilelist.Add(Instantiate(tileobject));
         }
         //Shuffling the List
         Shufflelist(tilelist);
@@ -103,7 +110,7 @@ public class Tiles : MonoBehaviour {
             Debug.LogError("Button no = " + index +" "+ objectTag.objectType);
         
     }
-    private void destroyTiles() {
+    public void destroyTiles() {
         foreach (GameObject tileobject in tilelist) {
             Destroy(tileobject);
         }
@@ -137,7 +144,20 @@ public class Tiles : MonoBehaviour {
     public List<GameObject> getList() {
         return tilelist;
     }
-
+    public void tileInactive() {
+        foreach (GameObject gameObject in tilelist) {
+            gameObject.GetComponent<Button>().interactable = false;
+        }
+    }
+    public void tileActive() {
+        foreach (GameObject gameObject in tilelist) {
+            gameObject.GetComponent<Button>().interactable = true;
+        }
+    }
+    public void setNoofTiles(int x) {
+        Debug.Log(x);
+        noOfTiles = x * x;
+    }
 }
 //public void hidetiles() {
 //    foreach (GameObject gameObject in tilelist) {
