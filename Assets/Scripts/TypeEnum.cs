@@ -7,6 +7,10 @@ public class ObjectTag : MonoBehaviour {
         DAIMOND,
         BOMB
     };
-
-    public Type objectType; // This will appear in the Inspector for you to set
+    public enum RevelType {
+        UNREVELED,
+        REVELED
+    }
+    public Type objectType;
+    public RevelType revelType;
 }
