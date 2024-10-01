@@ -6,14 +6,26 @@ using System.Collections.Generic;
 using TMPro;
 
 public class PanelCreator : MonoBehaviour {
+
     [SerializeField]
-    private RectTransform canvasTransform; // Assign your Canvas' RectTransform in the Inspector
+    private RectTransform canvasTransform;
+
+    [SerializeField]
+    private GameObject tilePanel3x3;
+    [SerializeField] 
+    private GameObject tilePanel5x5;
+    [SerializeField] 
+    private GameObject tilePanel7x7;
+    [SerializeField] 
+    private GameObject tilePanel9x9;
+
     [SerializeField]
     private GameObject UIPanel;
     [SerializeField]
     private GameObject selectionPanel;
     [SerializeField]
     private GameObject startPanelRef;
+
     
     public static PanelCreator instance;
     //private int tileCount = 16;
@@ -27,6 +39,7 @@ public class PanelCreator : MonoBehaviour {
     private VerticalLayoutGroup verticalLayoutGroup;
     private Color panelcolor = new Color(0f,0f,0f,0f);
     private Color leftPanelColor = new Color(19.0f / 255.0f, 19.0f / 255.0f, 19.0f / 255.0f, 233.0f / 255.0f);
+    private GameObject tile3x3, tile5x5, tile7x7, tile9x9;
 
     private void Awake() {
         if (instance == null) {
@@ -41,8 +54,17 @@ public class PanelCreator : MonoBehaviour {
     }
 
     
-
+    
     private void PanelCreators() {
+
+        tilePanel3x3 =  Instantiate(tilePanel3x3, canvasTransform);
+        tilePanel5x5 =  Instantiate(tilePanel5x5, canvasTransform);
+        tilePanel7x7 =  Instantiate(tilePanel7x7, canvasTransform);
+        tilePanel9x9 =  Instantiate(tilePanel9x9, canvasTransform);
+
+
+
+
         // Create a new GameObject with a RectTransform and Image component
         panelObject = new GameObject("SquarePanel", typeof(RectTransform), typeof(Image));
 
@@ -71,6 +93,37 @@ public class PanelCreator : MonoBehaviour {
 
         configuregridlayoutgroup();
     }
+
+    private void selectedTileGrid(Vector2Int gridS) {
+        if(gridS == new Vector2Int(3, 3)){
+            tilePanel3x3.SetActive(true);
+            tilePanel5x5.SetActive(false);
+            tilePanel7x7.SetActive(false);
+            tilePanel9x9.SetActive(false);
+        }
+        else if (gridS == new Vector2Int(5, 5)) {
+            tilePanel3x3.SetActive(false);
+            tilePanel5x5.SetActive(true);
+            tilePanel7x7.SetActive(false);
+            tilePanel9x9.SetActive(false);
+        }
+        else if (gridS == new Vector2Int(7, 7)) {
+            tilePanel3x3.SetActive(false);
+            tilePanel5x5.SetActive(false);
+            tilePanel7x7.SetActive(true);
+            tilePanel9x9.SetActive(false);
+        }
+        else if (gridS == new Vector2Int(9, 9)) {
+            tilePanel3x3.SetActive(false);
+            tilePanel5x5.SetActive(false);
+            tilePanel7x7.SetActive(false);
+            tilePanel9x9.SetActive(true);
+        }
+        else {
+            Debug.LogError("Unsupported grid size: " + gridS);
+        }
+    }
+
     private void CreateRightPanel() {
         // Create the new panel to the right of the center panel
         rightPanel = new GameObject("RightPanel", typeof(RectTransform), typeof(Image));

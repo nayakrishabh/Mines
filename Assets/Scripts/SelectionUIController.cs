@@ -41,8 +41,11 @@ public class SelectionUIController : MonoBehaviour
     }
     private void SetGridSize(Vector2Int gridSize) {
         _selectedGridSize = gridSize;
+
         HighlightButton(getGridButton(_selectedGridSize), ref selectedGridSizeButton);
+
         selectedGridSizeButton = getGridButton(gridSize);
+
         PanelCreator.instance.OnGridSizeChanged();
 
         Tiles.instance.setNoofTiles(gridSize.x);
@@ -100,12 +103,20 @@ public class SelectionUIController : MonoBehaviour
         connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(5, 5)));
         connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(7, 7)));
         connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(9, 9)));
+        connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(3, 3)));
+        connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(5, 5)));
+        connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(7, 7)));
+        connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(9, 9)));
+
         connector.Button3x3.GetComponentInChildren<TextMeshProUGUI>().text = $"3x3";
         connector.Button5x5.GetComponentInChildren<TextMeshProUGUI>().text = $"5x5";
         connector.Button7x7.GetComponentInChildren<TextMeshProUGUI>().text = $"7x7";
         connector.Button9x9.GetComponentInChildren<TextMeshProUGUI>().text = $"9x9";
     }
 
+    private void NotifyGridSize(Vector2Int gridSize) {
+        //GridSizeNotifier.noti
+    }
     private Button getGridButton(Vector2Int gridS) {
         if (gridS == new Vector2(3f, 3f)) {
             return connector.Button3x3.GetComponent<Button>();
