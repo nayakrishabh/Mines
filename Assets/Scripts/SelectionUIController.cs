@@ -28,7 +28,8 @@ public class SelectionUIController : MonoBehaviour
     {
         gridBombOption();
         addListenersAndSetText();
-        SetGridSize(new Vector2Int(5, 5));
+        NotifyGridSize(new Vector2Int(5, 5));
+        //SetGridSize(new Vector2Int(5, 5));
     }
     private void gridBombOption() {
         gridBombOptions = new Dictionary<Vector2Int, List<int>>
@@ -39,25 +40,9 @@ public class SelectionUIController : MonoBehaviour
             { new Vector2Int(9, 9), new List<int> { 5, 10, 15, 20 } }
         };
     }
-    private void SetGridSize(Vector2Int gridSize) {
-        _selectedGridSize = gridSize;
-
-        HighlightButton(getGridButton(_selectedGridSize), ref selectedGridSizeButton);
-
-        selectedGridSizeButton = getGridButton(gridSize);
-
-        PanelCreator.instance.OnGridSizeChanged();
-
-        Tiles.instance.setNoofTiles(gridSize.x);
-        Tiles.instance.destroyTiles();
-        Tiles.instance.startbuttoncoroutine(PanelCreator.instance.getpanelobject());
-        List<int> selectedBs = gridBombOptions[_selectedGridSize];
-        Debug.Log("Grid Size Selected: " + gridSize.x + "x" + gridSize.y);
-        _selectedBombCount = selectedBs[0];
-        HighlightButton(connector.bombButtons[0], ref selectedBombButton);
-        Debug.Log("Bomb Count Selected: " + _selectedBombCount);
-        UpdateBombButtons(gridBombOptions[gridSize]);
-    }
+    //private void SetGridSize(Vector2Int gridSize) {
+       
+    //}
 
     private void UpdateBombButtons(List<int> bombOptions) {
         int optionsCount = Mathf.Min(bombOptions.Count, connector.bombButtons.Count);
@@ -99,14 +84,14 @@ public class SelectionUIController : MonoBehaviour
     }
 
     private void addListenersAndSetText() {
-        connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(3, 3)));
-        connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(5, 5)));
-        connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(7, 7)));
-        connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(9, 9)));
-        connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(3, 3)));
-        connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(5, 5)));
-        connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(7, 7)));
-        connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(9, 9)));
+        //connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(3, 3)));
+        //connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(5, 5)));
+        //connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(7, 7)));
+        //connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(9, 9)));
+        connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(3, 3)));
+        connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(5, 5)));
+        connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(7, 7)));
+        connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(9, 9)));
 
         connector.Button3x3.GetComponentInChildren<TextMeshProUGUI>().text = $"3x3";
         connector.Button5x5.GetComponentInChildren<TextMeshProUGUI>().text = $"5x5";
@@ -115,7 +100,28 @@ public class SelectionUIController : MonoBehaviour
     }
 
     private void NotifyGridSize(Vector2Int gridSize) {
-        //GridSizeNotifier.noti
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.NotifyGridSizeChanged(gridSize);
+        }
+
+        _selectedGridSize = gridSize;
+
+        HighlightButton(getGridButton(_selectedGridSize), ref selectedGridSizeButton);
+
+        selectedGridSizeButton = getGridButton(gridSize);
+
+        //PanelCreator.instance.OnGridSizeChanged();
+
+        Tiles.instance.setNoofTiles(gridSize.x);
+        //Tiles.instance.destroyTiles();
+        //Tiles.instance.startbuttoncoroutine(PanelCreator.instance.getpanelobject());
+        List<int> selectedBs = gridBombOptions[_selectedGridSize];
+        Debug.Log("Grid Size Selected: " + gridSize.x + "x" + gridSize.y);
+        _selectedBombCount = selectedBs[0];
+        HighlightButton(connector.bombButtons[0], ref selectedBombButton);
+        Debug.Log("Bomb Count Selected: " + _selectedBombCount);
+        UpdateBombButtons(gridBombOptions[gridSize]);
+
     }
     private Button getGridButton(Vector2Int gridS) {
         if (gridS == new Vector2(3f, 3f)) {

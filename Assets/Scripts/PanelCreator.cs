@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
-public class PanelCreator : MonoBehaviour {
+public class PanelCreator : MonoBehaviour, IGridSizeListener {
 
     [SerializeField]
     private RectTransform canvasTransform;
@@ -46,15 +46,26 @@ public class PanelCreator : MonoBehaviour {
             instance = this;
         }
     }
+    private void OnEnable() {
+        
+    }
+    private void OnDisable() {
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.UnregisterListener(this);
+        }
+    }
     void Start() {
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.RegisterListener(this);
+        }
         CreateleftPanel();
         PanelCreators();
         CreateRightPanel();
-        Tiles.instance.startbuttoncoroutine(panelObject);
+        //Tiles.instance.startbuttoncoroutine(panelObject);
     }
-
-    
-    
+    public void OnGridSizeChanged(Vector2Int gridSize) {
+        TileGridSetup(gridSize);
+    }
     private void PanelCreators() {
 
         tilePanel3x3 =  Instantiate(tilePanel3x3, canvasTransform);
@@ -62,40 +73,52 @@ public class PanelCreator : MonoBehaviour {
         tilePanel7x7 =  Instantiate(tilePanel7x7, canvasTransform);
         tilePanel9x9 =  Instantiate(tilePanel9x9, canvasTransform);
 
+        TileGridSetup(new Vector2Int(5, 5));
 
+        //IGridSizeListener listener = gameObject.GetComponent<IGridSizeListener>();
+        //if (listener != null) {
+        //    GridSizeNotifier notifier = GridSizeNotifier.Instance;  // Ensure you're getting the correct notifier
+        //    notifier.RegisterListener(listener);
+        //}
+        //else {
+        //    Debug.LogError("Listener not found in prefab!");
+        //}
+        //// Create a new GameObject with a RectTransform and Image component
+        //panelObject = new GameObject("SquarePanel", typeof(RectTransform), typeof(Image));
 
+        //// Optional: Add color to the panel
+        //panelObject.GetComponent<Image>().color = panelcolor;
 
-        // Create a new GameObject with a RectTransform and Image component
-        panelObject = new GameObject("SquarePanel", typeof(RectTransform), typeof(Image));
+        //Vector2 anchorpointmin = new Vector2(0.24f, 0.08f);
+        //Vector2 anchorpointmax = new Vector2(0.76f, 0.92f);
+        //Vector2 pivotPoint = new Vector2(0.5f, 0.5f);
 
-        // Optional: Add color to the panel
-        panelObject.GetComponent<Image>().color = panelcolor;
+        //gridLayoutGroup = panelObject.AddComponent<GridLayoutGroup>();
 
-        Vector2 anchorpointmin = new Vector2(0.24f, 0.08f);
-        Vector2 anchorpointmax = new Vector2(0.76f, 0.92f);
-        Vector2 pivotPoint = new Vector2(0.5f, 0.5f);
+        //// Set the panel's parent to be the Canvas
+        //RectTransform panelRect = panelObject.GetComponent<RectTransform>();
+        //panelRect.SetParent(canvasTransform, false);
+        //startPanel = Instantiate(startPanelRef, canvasTransform);
+        //startPanel.transform.SetAsLastSibling();
+        //// Set the size of the panel
+        //panelRect.sizeDelta = Vector2.zero;
 
-        gridLayoutGroup = panelObject.AddComponent<GridLayoutGroup>();
+        //// Center the panel and make it maintain a square aspect ratio
+        //panelRect.anchorMin = anchorpointmin;
+        //panelRect.anchorMax = anchorpointmax;
+        //panelRect.pivot = pivotPoint;
+        //panelRect.anchoredPosition = Vector2.zero;
 
-        // Set the panel's parent to be the Canvas
-        RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-        panelRect.SetParent(canvasTransform, false);
-        startPanel = Instantiate(startPanelRef, canvasTransform);
-        startPanel.transform.SetAsLastSibling();
-        // Set the size of the panel
-        panelRect.sizeDelta = Vector2.zero;
+        //configuregridlayoutgroup();
+    }
+    private void TileGridSetup(Vector2Int gridS) {
+        tileGridSelection(gridS);
 
-        // Center the panel and make it maintain a square aspect ratio
-        panelRect.anchorMin = anchorpointmin;
-        panelRect.anchorMax = anchorpointmax;
-        panelRect.pivot = pivotPoint;
-        panelRect.anchoredPosition = Vector2.zero;
-
-        configuregridlayoutgroup();
     }
 
-    private void selectedTileGrid(Vector2Int gridS) {
-        if(gridS == new Vector2Int(3, 3)){
+    private void tileGridSelection(Vector2Int gridS) {
+
+        if (gridS == new Vector2Int(3, 3)) {
             tilePanel3x3.SetActive(true);
             tilePanel5x5.SetActive(false);
             tilePanel7x7.SetActive(false);
@@ -174,29 +197,29 @@ public class PanelCreator : MonoBehaviour {
 
         //configVerticalLayoutGroup();
     }
-    #region LayoutConfigurations
-    private void configuregridlayoutgroup() {
+    //#region LayoutConfigurations
+    //private void configuregridlayoutgroup() {
 
-        Vector2 cellSize = GetCellSize(SelectionUIController.instance.SelectedGridSize);
-        Vector2 spaceing = GetSpacing(SelectionUIController.instance.SelectedGridSize);
+    //    Vector2 cellSize = GetCellSize(SelectionUIController.instance.SelectedGridSize);
+    //    Vector2 spaceing = GetSpacing(SelectionUIController.instance.SelectedGridSize);
 
-        gridLayoutGroup.padding = new RectOffset(0,0,0,0);
+    //    gridLayoutGroup.padding = new RectOffset(0,0,0,0);
 
-        // Set cell size and spacing
-        gridLayoutGroup.cellSize = cellSize;
-        gridLayoutGroup.spacing = spaceing;
+    //    // Set cell size and spacing
+    //    gridLayoutGroup.cellSize = cellSize;
+    //    gridLayoutGroup.spacing = spaceing;
 
-        // Set alignment and layout constraints
-        gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
-        gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
-        gridLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
-        gridLayoutGroup.constraint = GridLayoutGroup.Constraint.Flexible;
+    //    // Set alignment and layout constraints
+    //    gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
+    //    gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
+    //    gridLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
+    //    gridLayoutGroup.constraint = GridLayoutGroup.Constraint.Flexible;
 
-    }
+    //}
 
-    public void OnGridSizeChanged() {
-        configuregridlayoutgroup();
-    }
+    //public void OnGridSizeChanged() {
+    //    configuregridlayoutgroup();
+    //}
 
 
     //private Vector2 getcellSize(Vector2Int gridS) {
@@ -277,7 +300,7 @@ public class PanelCreator : MonoBehaviour {
     //    verticalLayoutGroup.childScaleWidth = true;
     //}
 
-    #endregion
+//#endregion
     private void Update() {
     }
     public GameObject getUiPanel() {
@@ -289,5 +312,6 @@ public class PanelCreator : MonoBehaviour {
     public GameObject getpanelobject() {
         return panelObject;
     }
+
 }
 
