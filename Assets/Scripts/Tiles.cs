@@ -37,9 +37,7 @@ public class Tiles : MonoBehaviour {
         noOfBomb = SelectionUIController.instance.SelectedBombCount;
 
         if (clickCount > 0) {
-            foreach (GameObject gameObject in tilelist) {
-                gameObject.GetComponent<Button>().interactable = false;
-            }
+            buttonIntractablityOff();
             UIController.Instance.onUIButton();
         }
 
@@ -53,7 +51,6 @@ public class Tiles : MonoBehaviour {
     //    StartCoroutine(Buttontilecreator());
     //}
     public void gameReset() {
-        restoreTiles();
         StartCoroutine(GameResetCoroutine());
     }
 
@@ -64,6 +61,25 @@ public class Tiles : MonoBehaviour {
 
     //ButtonTILECREATOR WTIH SHUFFLING LOGIC
     IEnumerator Buttontilecreator() {
+
+        restoreTiles();
+
+        tilelist.Clear();
+
+        Debug.LogError(pC.selectedTile.name);
+
+        mainToTemp();
+
+        //Shuffling the List
+        Shufflelist(tilelist);
+        
+        AddListeners();
+
+        tempToMain();
+
+
+        yield return null;
+
         ////Instanstiating the TileButtons
         //for (int i = 0; i < noOfBomb; i++) {
         //    GameObject tileobject = Instantiate(buttonTile);
@@ -78,9 +94,27 @@ public class Tiles : MonoBehaviour {
         //}
 
         // Clear the list (this only affects the list, not the child objects)
-        tilelist.Clear();
 
-        Debug.LogError(pC.selectedTile.name);
+        //restoreTiles();
+
+        //Setting UP Parent
+        //if (panelObject.transform != null) {
+        //    foreach (GameObject tileobject in tilelist) {
+        //        if (tileobject != null) { 
+        //            tileobject.transform.SetParent(panelObject.transform);
+        //            tileobject.transform.localScale = Vector3.one;
+        //        }
+        //    }
+        //}
+        //for (int i = 0; i < tilelist.Count; i++) {
+        //    TextMeshProUGUI[] tmpComponents = tilelist[i].GetComponentsInChildren<TextMeshProUGUI>();
+        //    foreach (TextMeshProUGUI tmp in tmpComponents) {
+        //        tmp.enabled = false;
+        //    }
+        //}
+    }
+    private void mainToTemp() {
+
         if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
             tilelist.AddRange(pC.tilelist3x3);
             pC.tilelist3x3.Clear();
@@ -97,35 +131,11 @@ public class Tiles : MonoBehaviour {
             tilelist.AddRange(pC.tilelist9x9);
             pC.tilelist9x9.Clear();
         }
-
-        //Shuffling the List
-        Shufflelist(tilelist);
-        //Setting UP Parent
-
-
-
-        //if (panelObject.transform != null) {
-        //    foreach (GameObject tileobject in tilelist) {
-        //        if (tileobject != null) { 
-        //            tileobject.transform.SetParent(panelObject.transform);
-        //            tileobject.transform.localScale = Vector3.one;
-        //        }
-        //    }
-        //}
-        //for (int i = 0; i < tilelist.Count; i++) {
-        //    TextMeshProUGUI[] tmpComponents = tilelist[i].GetComponentsInChildren<TextMeshProUGUI>();
-        //    foreach (TextMeshProUGUI tmp in tmpComponents) {
-        //        tmp.enabled = false;
-        //    }
-        //}
-        AddListeners();
-
-        addToMainlist();
-
-        yield return null;
     }
+    private void tempToMain() {
 
-    private void addToMainlist() {
+        buttonIntractablityOn();
+
         if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
             pC.tilelist3x3 = tilelist;
             tilelist.Clear();
@@ -144,51 +154,120 @@ public class Tiles : MonoBehaviour {
         }
     }
     private void AddListeners() {
-        for (int i = 0; i < tilelist.Count; i++) {
-            int index = i; // Prevent closure issue
-            tilelist[index].GetComponent<Button>().onClick.RemoveAllListeners();
-            tilelist[index].GetComponent<Button>().onClick.AddListener(() => OnClick(index));
+        foreach (var tile in tilelist) {
+            //tile.GetComponent<Button>().interactable = true;
+            tile.GetComponent<Button>().onClick.RemoveAllListeners();
+            tile.GetComponent<Button>().onClick.AddListener(() => OnClick(tile));
+        }
+        //for (int i = 0; i < tilelist.Count; i++) {
+        //    int index = i; // Prevent closure issue
+        //    tilelist[index].GetComponent<Button>().onClick.RemoveAllListeners();
+        //    tilelist[index].GetComponent<Button>().onClick.AddListener(() => OnClick(index));
+        //    buttonIntractablityOn();
+        //}
+    }
+
+    #region BUTTON INTRACTABLITY
+    private void buttonIntractablityOn() {
+        foreach (var tile in tilelist) {
+            tile.GetComponent<Button>().interactable = true;
         }
     }
-    public void OnClick(int index) {
-        
-            ObjectTag objectTag = tilelist[index].GetComponent<ObjectTag>();
+    private void buttonIntractablityOff() {
 
-            revel(objectTag.objectType, index);
-
-            Debug.LogError("Button no = " + index +" "+ objectTag.objectType);
+        if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist3x3) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-5x5(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist5x5) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-7x7(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist7x7) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-9x9(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist9x9) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
+    }
+    #endregion
+    public void OnClick(GameObject tile) {
         
+        ObjectTag objectTag = tile.GetComponent<ObjectTag>();
+
+        int index = tilelist.IndexOf(tile);
+
+        if (index != -1) {
+            revel(objectTag.objectType, tile);
+
+            Debug.LogError($"Button no = {index} | Object Type = {objectTag.objectType}");
+        }
+        else {
+            
+            Debug.LogError("Tile not found in the list.");
+        }
     }
     public void restoreTiles() {
-        Debug.LogError(tilelist.Count);
         resetTiles();
-        tilelist.Clear();
         clickCount = 0;
     }
+    public void resetAllTiles() {
+
+    }
     //revel Logic
-    private void revel(ObjectTag.Type type, int index) {
+    private void revel(ObjectTag.Type type, GameObject tile) {
         if (clickCount == 0) {
             if (type == ObjectTag.Type.BOMB) {
-                tilelist[index].GetComponent<Image>().sprite = bombSprite;
+                tile.GetComponent<Image>().sprite = bombSprite;
                 clickCount++;
             }
             else if (type == ObjectTag.Type.DAIMOND) {
-                tilelist[index].GetComponent<Image>().sprite = daimondSprite;
+                tile.GetComponent<Image>().sprite = daimondSprite;
             }
         }
-        tilelist[index].GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
+        tile.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
     }
 
     private void resetTiles() {
-        foreach (GameObject gO in tilelist) {
-            gO.GetComponent<Image>().sprite = tileSprite;
-            gO.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+        //Debug.LogError("Entry");
+
+       // Debug.LogError(tilelist.Count);
+
+        if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist3x3) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-5x5(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist5x5) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-7x7(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist7x7) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-9x9(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist9x9) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
         }
     }
     //Shuffle Logic
     private List<GameObject> Shufflelist(List<GameObject> Tilelist) {
         for (int i = 0; i < (Tilelist.Count - 1); i++) {
-            Debug.Log(Tilelist[i].GetComponent<ObjectTag>().objectType);
+            Debug.LogError("Entry " + tilelist.Count);
             var r =  Random.Range(i, Tilelist.Count);
             var temp = Tilelist[i];
             Tilelist[i] = Tilelist[r];
@@ -196,20 +275,7 @@ public class Tiles : MonoBehaviour {
         }
         return Tilelist;
     }
-    
-    public List<GameObject> getList() {
-        return tilelist;
-    }
-    public void tileInactive() {
-        foreach (GameObject gameObject in tilelist) {
-            gameObject.GetComponent<Button>().interactable = false;
-        }
-    }
-    public void tileActive() {
-        foreach (GameObject gameObject in tilelist) {
-            gameObject.GetComponent<Button>().interactable = true;
-        }
-    }
+   
     public void setNoofTiles(int x) {
         Debug.Log(x);
         noOfTiles = x * x;
