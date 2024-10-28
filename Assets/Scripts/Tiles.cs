@@ -64,14 +64,11 @@ public class Tiles : MonoBehaviour {
 
         restoreTiles();
 
-        tilelist.Clear();
+        
 
         Debug.LogError(pC.selectedTile.name);
 
         mainToTemp();
-
-        //Shuffling the List
-        Shufflelist(tilelist);
         
         AddListeners();
 
@@ -131,6 +128,7 @@ public class Tiles : MonoBehaviour {
             tilelist.AddRange(pC.tilelist9x9);
             pC.tilelist9x9.Clear();
         }
+        ShuffleList(tilelist);
     }
     private void tempToMain() {
 
@@ -198,20 +196,26 @@ public class Tiles : MonoBehaviour {
     }
     #endregion
     public void OnClick(GameObject tile) {
-        
-        ObjectTag objectTag = tile.GetComponent<ObjectTag>();
+        // Debug log to check if tilelist has items
+        //Debug.Log($"Tilelist count: {tilelist.Count}");
 
-        int index = tilelist.IndexOf(tile);
+        //// Debug log to compare the incoming tile with list items
+        //for (int i = 0; i < tilelist.Count; i++) {
+        //    Debug.Log($"Comparing tile {i}: List tile = {tilelist[i].name}, Clicked tile = {tile.name}");
+        //}
 
-        if (index != -1) {
-            revel(objectTag.objectType, tile);
+        //ObjectTag objectTag = tile.GetComponent<ObjectTag>();
+        //int index = tilelist.IndexOf(tile);
 
-            Debug.LogError($"Button no = {index} | Object Type = {objectTag.objectType}");
-        }
-        else {
-            
-            Debug.LogError("Tile not found in the list.");
-        }
+        //if (index != -1) {
+        //    revel(objectTag.objectType, tile);
+        //    Debug.Log($"Button no = {index} | Object Type = {objectTag.objectType}");
+        //}
+        //else {
+        //    Debug.LogError("Tile not found in the list. Tile name: " + tile.name);
+        //}
+
+        revel(tile);
     }
     public void restoreTiles() {
         resetTiles();
@@ -221,7 +225,8 @@ public class Tiles : MonoBehaviour {
 
     }
     //revel Logic
-    private void revel(ObjectTag.Type type, GameObject tile) {
+    private void revel(GameObject tile) {
+        ObjectTag.Type type = tile.GetComponent<ObjectTag>().objectType;
         if (clickCount == 0) {
             if (type == ObjectTag.Type.BOMB) {
                 tile.GetComponent<Image>().sprite = bombSprite;
@@ -265,17 +270,28 @@ public class Tiles : MonoBehaviour {
         }
     }
     //Shuffle Logic
-    private List<GameObject> Shufflelist(List<GameObject> Tilelist) {
-        for (int i = 0; i < (Tilelist.Count - 1); i++) {
-            Debug.LogError("Entry " + tilelist.Count);
-            var r =  Random.Range(i, Tilelist.Count);
-            var temp = Tilelist[i];
-            Tilelist[i] = Tilelist[r];
-            Tilelist[r] = temp;
+    //private List<GameObject> Shufflelist(List<GameObject> Tilelist) {
+    //    for (int i = 0; i < (Tilelist.Count - 1); i++) {
+    //        var r =  Random.Range(i, Tilelist.Count);
+    //        var temp = Tilelist[i];
+    //        Tilelist[i] = Tilelist[r];
+    //        Tilelist[r] = temp;
+    //    }
+    //    return Tilelist;
+    //}
+    private void ShuffleList(List<GameObject> tileList) {
+        // Create a new list to avoid modifying the original
+
+        int randomIndex = Random.Range(0, tileList.Count);
+
+        foreach (GameObject tile in tileList) { 
+            tile.GetComponent<ObjectTag>().objectType = ObjectTag.Type.DAIMOND;
         }
-        return Tilelist;
+
+        tilelist[randomIndex].GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
+
     }
-   
+
     public void setNoofTiles(int x) {
         Debug.Log(x);
         noOfTiles = x * x;
