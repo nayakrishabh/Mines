@@ -58,6 +58,10 @@ public class SelectionUIController : MonoBehaviour
         _selectedBombCount = bombCount;
         Debug.Log("Bomb Count Selected: " + _selectedBombCount);
 
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
+        }
+
         HighlightButton(bombButton, ref selectedBombButton);
     }
     // Method to Highlight the selected button and reset previous one
@@ -84,10 +88,6 @@ public class SelectionUIController : MonoBehaviour
     }
 
     private void addListenersAndSetText() {
-        //connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(3, 3)));
-        //connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(5, 5)));
-        //connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(7, 7)));
-        //connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => SetGridSize(new Vector2Int(9, 9)));
         connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(3, 3)));
         connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(5, 5)));
         connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(7, 7)));
@@ -100,6 +100,7 @@ public class SelectionUIController : MonoBehaviour
     }
 
     private void NotifyGridSize(Vector2Int gridSize) {
+
         if (GridSizeNotifier.Instance != null) {
             GridSizeNotifier.Instance.NotifyGridSizeChanged(gridSize);
         }
@@ -110,16 +111,19 @@ public class SelectionUIController : MonoBehaviour
 
         selectedGridSizeButton = getGridButton(gridSize);
 
-        //PanelCreator.instance.OnGridSizeChanged();
-
         Tiles.instance.setNoofTiles(gridSize.x);
-        //Tiles.instance.destroyTiles();
-        //Tiles.instance.startbuttoncoroutine(PanelCreator.instance.getpanelobject());
-        List<int> selectedBs = gridBombOptions[_selectedGridSize];
+
         Debug.Log("Grid Size Selected: " + gridSize.x + "x" + gridSize.y);
-        _selectedBombCount = selectedBs[0];
+        //List<int> selectedBs = gridBombOptions[_selectedGridSize];
+
+
+
+        //_selectedBombCount = selectedBs[0];
+        
         HighlightButton(connector.bombButtons[0], ref selectedBombButton);
+        
         Debug.Log("Bomb Count Selected: " + _selectedBombCount);
+        
         UpdateBombButtons(gridBombOptions[gridSize]);
 
     }

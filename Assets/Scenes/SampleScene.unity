@@ -351,7 +351,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonTile: {fileID: 8077795610582032888, guid: 7109811b4b16c3f4da7e4eed0f1a39e3, type: 3}
-  panelObject: {fileID: 0}
   bombSprite: {fileID: 21300000, guid: 4903130a73700084fa9fbac6c39742a1, type: 3}
   daimondSprite: {fileID: 21300000, guid: 9b647216e2bdd5740b19cff4aa7132b5, type: 3}
   tileSprite: {fileID: 21300000, guid: 8a28fb36a8dedae49a408bbd71d92dba, type: 3}
