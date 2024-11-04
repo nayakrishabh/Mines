@@ -41,9 +41,35 @@ public class SelectionUIController : MonoBehaviour
         };
     }
     //private void SetGridSize(Vector2Int gridSize) {
-       
-    //}
 
+    //}
+    private void NotifyGridSize(Vector2Int gridSize) {
+
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.NotifyGridSizeChanged(gridSize);
+        }
+
+        _selectedGridSize = gridSize;
+
+        HighlightButton(getGridButton(_selectedGridSize), ref selectedGridSizeButton);
+
+        selectedGridSizeButton = getGridButton(gridSize);
+
+        Tiles.instance.setNoofTiles(gridSize.x);
+
+        Debug.Log("Grid Size Selected: " + gridSize.x + "x" + gridSize.y);
+
+        HighlightButton(connector.bombButtons[0], ref selectedBombButton);
+
+        UpdateBombButtons(gridBombOptions[gridSize]);
+
+        List<int> selectedBs = gridBombOptions[_selectedGridSize];
+        _selectedBombCount = selectedBs[0];
+
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
+        }
+    }
     private void UpdateBombButtons(List<int> bombOptions) {
         int optionsCount = Mathf.Min(bombOptions.Count, connector.bombButtons.Count);
         for (int i = 0; i < bombOptions.Count; i++) {
@@ -93,39 +119,32 @@ public class SelectionUIController : MonoBehaviour
         connector.Button7x7.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(7, 7)));
         connector.Button9x9.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(9, 9)));
 
+        connector.custom.GetComponent<TMP_InputField>().onValueChanged.AddListener((string nofb)=>custombombNo(nofb));
+        connector.custom.GetComponent<TMP_InputField>().onEndEdit.AddListener((string inp)=>validateInput(inp));
         connector.Button3x3.GetComponentInChildren<TextMeshProUGUI>().text = $"3x3";
         connector.Button5x5.GetComponentInChildren<TextMeshProUGUI>().text = $"5x5";
         connector.Button7x7.GetComponentInChildren<TextMeshProUGUI>().text = $"7x7";
         connector.Button9x9.GetComponentInChildren<TextMeshProUGUI>().text = $"9x9";
     }
-
-    private void NotifyGridSize(Vector2Int gridSize) {
+    private void validateInput(string inp) {
+        if(string.IsNullOrEmpty(inp) || int.Parse(inp) < 1) {
+            List<int> selectedBs = gridBombOptions[_selectedGridSize];
+            _selectedBombCount = selectedBs[0];
+            connector.custom.GetComponent<TMP_InputField>().text = _selectedBombCount.ToString();
+        }
+        else if(int.Parse(inp) > ((_selectedGridSize.x * _selectedGridSize.x) - 1)) {
+            List<int> selectedBs = gridBombOptions[_selectedGridSize];
+            _selectedBombCount = ((_selectedGridSize.x * _selectedGridSize.x) - 1);
+            connector.custom.GetComponent<TMP_InputField>().text = _selectedBombCount.ToString();
+        }
+    }
+    private void custombombNo(string nofb) {
+        _selectedBombCount = int.Parse(nofb);
 
         if (GridSizeNotifier.Instance != null) {
-            GridSizeNotifier.Instance.NotifyGridSizeChanged(gridSize);
+            GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
         }
-
-        _selectedGridSize = gridSize;
-
-        HighlightButton(getGridButton(_selectedGridSize), ref selectedGridSizeButton);
-
-        selectedGridSizeButton = getGridButton(gridSize);
-
-        Tiles.instance.setNoofTiles(gridSize.x);
-
-        Debug.Log("Grid Size Selected: " + gridSize.x + "x" + gridSize.y);
-        //List<int> selectedBs = gridBombOptions[_selectedGridSize];
-
-
-
-        //_selectedBombCount = selectedBs[0];
-        
-        HighlightButton(connector.bombButtons[0], ref selectedBombButton);
-        
-        Debug.Log("Bomb Count Selected: " + _selectedBombCount);
-        
-        UpdateBombButtons(gridBombOptions[gridSize]);
-
+        connector.custom.GetComponent<TMP_InputField>().text = nofb;
     }
     private Button getGridButton(Vector2Int gridS) {
         if (gridS == new Vector2(3f, 3f)) {

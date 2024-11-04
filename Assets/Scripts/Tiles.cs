@@ -101,8 +101,6 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
 
         for (int i = 0; i < noOfBomb; i++) {
             int randomIndex;
-
-            
             do {
                 randomIndex = Random.Range(0, tileList.Count);
             } while (usedIndices.Contains(randomIndex));
@@ -110,6 +108,7 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
             usedIndices.Add(randomIndex);
 
             tileList[randomIndex].GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
+            Debug.Log(tilelist[randomIndex].GetComponent<ObjectTag>().objectType);
         }
 
     }
