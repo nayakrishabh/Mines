@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
 
     private float balance = 100000;
 
-
     private void Awake() {
         if (instance == null) {
             instance = this;

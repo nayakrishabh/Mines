@@ -35,7 +35,6 @@ public class UIController : MonoBehaviour
         Tiles.instance.gameReset();
         offUIButton();
         GameManager.instance.setbalance(-betAmount);
-        Tiles.instance.tileActive();
     }
 
     #region INPUT HANDLER
