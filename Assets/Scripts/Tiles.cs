@@ -88,6 +88,7 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
 
     public void NoOfBombsChanged(int noOfBombs) {
         noOfBomb = noOfBombs;
+        resetTiles();
     }
 
     #region BASIC LOGICS

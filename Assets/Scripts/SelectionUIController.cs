@@ -17,6 +17,7 @@ public class SelectionUIController : MonoBehaviour
     private Color selectedButtonColor = Color.cyan;
     private Button selectedGridSizeButton;
     private Button selectedBombButton;
+    private TMP_InputField selectedInputField = null;
 
 
     private void Awake() {
@@ -40,15 +41,11 @@ public class SelectionUIController : MonoBehaviour
             { new Vector2Int(9, 9), new List<int> { 5, 10, 15, 20 } }
         };
     }
-    //private void SetGridSize(Vector2Int gridSize) {
-
-    //}
     private void NotifyGridSize(Vector2Int gridSize) {
 
         if (GridSizeNotifier.Instance != null) {
             GridSizeNotifier.Instance.NotifyGridSizeChanged(gridSize);
         }
-
         _selectedGridSize = gridSize;
 
         HighlightButton(getGridButton(_selectedGridSize), ref selectedGridSizeButton);
@@ -63,15 +60,17 @@ public class SelectionUIController : MonoBehaviour
 
         UpdateBombButtons(gridBombOptions[gridSize]);
 
-        List<int> selectedBs = gridBombOptions[_selectedGridSize];
-        _selectedBombCount = selectedBs[0];
-
         if (GridSizeNotifier.Instance != null) {
             GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
         }
+
     }
     private void UpdateBombButtons(List<int> bombOptions) {
+
+        _selectedBombCount = bombOptions[0];
+
         int optionsCount = Mathf.Min(bombOptions.Count, connector.bombButtons.Count);
+
         for (int i = 0; i < bombOptions.Count; i++) {
                 int bombCount = bombOptions[i];
                 connector.bombButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = bombCount.ToString();
@@ -79,40 +78,22 @@ public class SelectionUIController : MonoBehaviour
                 int index = i;
                 connector.bombButtons[i].onClick.AddListener(() => SetBombCount(bombCount, connector.bombButtons[index]));
         }
+
+        ResetCustomInputFieldColor();
+        connector.custom.GetComponent<TMP_InputField>().text = "Custom";
     }
-    private void SetBombCount(int bombCount , Button bombButton) {
-        _selectedBombCount = bombCount;
-        Debug.Log("Bomb Count Selected: " + _selectedBombCount);
+    private void ResetCustomInputFieldColor() {
+        TMP_InputField customInputField = connector.custom.GetComponent<TMP_InputField>();
+        ColorBlock colorBlock = customInputField.colors;
 
-        if (GridSizeNotifier.Instance != null) {
-            GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
-        }
+        // Set colors back to default
+        colorBlock.normalColor = ColorBlock.defaultColorBlock.normalColor;
+        colorBlock.highlightedColor = ColorBlock.defaultColorBlock.highlightedColor;
+        colorBlock.selectedColor = ColorBlock.defaultColorBlock.selectedColor;
+        colorBlock.disabledColor = ColorBlock.defaultColorBlock.disabledColor;
 
-        HighlightButton(bombButton, ref selectedBombButton);
+        customInputField.colors = colorBlock;
     }
-    // Method to Highlight the selected button and reset previous one
-    private void HighlightButton(Button newSelectedButton, ref Button previouslySelectedButton) {
-        // Reset the color of the previously selected button
-        if (previouslySelectedButton != null) {
-            SetButtonColor(previouslySelectedButton, defaultButtonColor);
-        }
-
-        // Highlight the new selected button
-        SetButtonColor(newSelectedButton, selectedButtonColor);
-
-        // Update the reference to the currently selected button
-        previouslySelectedButton = newSelectedButton;
-    }
-
-    // Method to Set the Button Color
-    private void SetButtonColor(Button button, Color color) {
-        ColorBlock colorBlock = button.colors;
-        colorBlock.normalColor = color;
-        colorBlock.highlightedColor = color;
-        colorBlock.selectedColor = color;
-        button.colors = colorBlock;
-    }
-
     private void addListenersAndSetText() {
         connector.Button3x3.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(3, 3)));
         connector.Button5x5.GetComponent<Button>().onClick.AddListener(() => NotifyGridSize(new Vector2Int(5, 5)));
@@ -121,31 +102,113 @@ public class SelectionUIController : MonoBehaviour
 
         connector.custom.GetComponent<TMP_InputField>().onValueChanged.AddListener((string nofb)=>custombombNo(nofb));
         connector.custom.GetComponent<TMP_InputField>().onEndEdit.AddListener((string inp)=>validateInput(inp));
+
         connector.Button3x3.GetComponentInChildren<TextMeshProUGUI>().text = $"3x3";
         connector.Button5x5.GetComponentInChildren<TextMeshProUGUI>().text = $"5x5";
         connector.Button7x7.GetComponentInChildren<TextMeshProUGUI>().text = $"7x7";
         connector.Button9x9.GetComponentInChildren<TextMeshProUGUI>().text = $"9x9";
     }
-    private void validateInput(string inp) {
-        if(string.IsNullOrEmpty(inp) || int.Parse(inp) < 1) {
-            List<int> selectedBs = gridBombOptions[_selectedGridSize];
-            _selectedBombCount = selectedBs[0];
-            connector.custom.GetComponent<TMP_InputField>().text = _selectedBombCount.ToString();
-        }
-        else if(int.Parse(inp) > ((_selectedGridSize.x * _selectedGridSize.x) - 1)) {
-            List<int> selectedBs = gridBombOptions[_selectedGridSize];
-            _selectedBombCount = ((_selectedGridSize.x * _selectedGridSize.x) - 1);
-            connector.custom.GetComponent<TMP_InputField>().text = _selectedBombCount.ToString();
-        }
-    }
-    private void custombombNo(string nofb) {
-        _selectedBombCount = int.Parse(nofb);
+    #region Setting Bomb Count
+    private void SetBombCount(int bombCount, Button bombButton) {
+        _selectedBombCount = bombCount;
+
+        Debug.Log("Bomb Count Selected: " + _selectedBombCount);
 
         if (GridSizeNotifier.Instance != null) {
             GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
         }
-        connector.custom.GetComponent<TMP_InputField>().text = nofb;
+        if (selectedInputField != null) {
+            SetInputColor(selectedInputField, defaultButtonColor);
+        }
+        HighlightButton(bombButton, ref selectedBombButton);
     }
+    private void custombombNo(string nofb) {
+
+        _selectedBombCount = int.Parse(nofb);
+
+        TMP_InputField custIF = connector.custom.GetComponent<TMP_InputField>();
+
+        if (selectedBombButton != null) {
+            SetButtonColor(selectedBombButton, defaultButtonColor);
+        }
+
+        highLightCustomField(custIF, ref selectedInputField);
+
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.NotifyNoOfBombsChanged(_selectedBombCount);
+        }
+        custIF.text = nofb;
+    }
+    private void validateInput(string inp) {
+
+        TMP_InputField custIF = connector.custom.GetComponent<TMP_InputField>();
+
+        if (string.IsNullOrEmpty(inp) || int.Parse(inp) < 1) {
+            List<int> selectedBs = gridBombOptions[_selectedGridSize];
+            _selectedBombCount = selectedBs[0];
+            custIF.text = _selectedBombCount.ToString();
+        }
+        else if(int.Parse(inp) > ((_selectedGridSize.x * _selectedGridSize.x) - 1)) {
+            List<int> selectedBs = gridBombOptions[_selectedGridSize];
+            _selectedBombCount = ((_selectedGridSize.x * _selectedGridSize.x) - 1);
+            custIF.text = _selectedBombCount.ToString();
+        }
+    }
+    #endregion
+
+    #region Highlighting Buttons and Custom InputField
+    private void HighlightButton(Button newSelectedButton, ref Button previouslySelectedButton) {
+
+        if (previouslySelectedButton != null) {
+            SetButtonColor(previouslySelectedButton, defaultButtonColor);
+            previouslySelectedButton.interactable = true;
+        }
+
+        SetButtonColor(newSelectedButton, selectedButtonColor , true);
+        previouslySelectedButton = newSelectedButton;
+    }
+    private void SetButtonColor(Button button, Color color, bool retainColorOnDisable = false) {
+        ColorBlock colorBlock = button.colors;
+        colorBlock.normalColor = color;
+        colorBlock.highlightedColor = color;
+        colorBlock.selectedColor = color;
+
+        if (retainColorOnDisable) {
+            colorBlock.disabledColor = color;
+        }
+        else {
+            // Reset disabled color to default
+            colorBlock.disabledColor = ColorBlock.defaultColorBlock.disabledColor; // Or whatever default color you prefer
+        }
+
+        button.colors = colorBlock;
+    }
+    private void highLightCustomField(TMP_InputField custIF, ref TMP_InputField previouslySelectedField) {
+        if (previouslySelectedField != null) {
+            SetInputColor(previouslySelectedField, defaultButtonColor);
+            previouslySelectedField.interactable = true;
+        }
+        SetInputColor(custIF, selectedButtonColor , true);
+
+        previouslySelectedField = custIF;
+    }
+    private void SetInputColor(TMP_InputField custIF, Color color, bool retainColorOnDisable = false) {
+        ColorBlock colorBlock = custIF.colors;
+        colorBlock.normalColor = color;
+        colorBlock.highlightedColor = color;
+        colorBlock.selectedColor = color;
+
+        if (retainColorOnDisable) {
+            colorBlock.disabledColor = color;
+        }
+        else {
+            // Reset disabled color to default
+            colorBlock.disabledColor = Color.gray; // Or whatever default color you prefer
+        }
+        custIF.colors = colorBlock;
+    }
+    #endregion
+  
     private Button getGridButton(Vector2Int gridS) {
         if (gridS == new Vector2(3f, 3f)) {
             return connector.Button3x3.GetComponent<Button>();
@@ -165,6 +228,7 @@ public class SelectionUIController : MonoBehaviour
         }
     }
     public void setUIOff() {
+
         connector.Button3x3.GetComponent<Button>().interactable = false;
         connector.Button5x5.GetComponent<Button>().interactable = false;
         connector.Button7x7.GetComponent<Button>().interactable = false;
@@ -188,7 +252,6 @@ public class SelectionUIController : MonoBehaviour
     }
     public Vector2Int SelectedGridSize { get { return _selectedGridSize; } }
     public int SelectedBombCount { get { return _selectedBombCount; } }
-    // Update is called once per frame
     void Update()
     {
         
