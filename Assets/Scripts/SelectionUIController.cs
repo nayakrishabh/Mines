@@ -108,6 +108,7 @@ public class SelectionUIController : MonoBehaviour
         connector.Button7x7.GetComponentInChildren<TextMeshProUGUI>().text = $"7x7";
         connector.Button9x9.GetComponentInChildren<TextMeshProUGUI>().text = $"9x9";
     }
+
     #region Setting Bomb Count
     private void SetBombCount(int bombCount, Button bombButton) {
         _selectedBombCount = bombCount;

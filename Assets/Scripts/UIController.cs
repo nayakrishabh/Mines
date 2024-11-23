@@ -75,7 +75,8 @@ public class UIController : MonoBehaviour
     void Update()
     {
         connector.balanceText.text = $"Balance : \n {GameManager.instance.getbalance()}";
-        connector.winsText.text = $"Balance : \n {GameManager.instance.getbalance()}";
+        connector.winsText.text = $"Wins : 0";
+        //connector.winsText.text = $"Wins : 0 \n {GameManager.instance.getbalance()}";
     }
     private void offUIButton() {
         startpanelcomp.SetActive(false);
