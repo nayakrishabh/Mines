@@ -86,19 +86,27 @@ public class PanelCreator : MonoBehaviour, IGridSizeListener {
         for (int i = 0; i < tile3x3.transform.childCount; i++) {
             if (tile3x3.transform.GetChild(i) != null) {
                 GameObject childObj = tile3x3.transform.GetChild(i).gameObject;
-                Debug.Log(childObj.name);
                 _tilelist3x3.Add(childObj);
             }
         }
 
         for (int i = 0; i < tile5x5.transform.childCount; i++) {
-            _tilelist5x5.Add(tile5x5.transform.GetChild(i).gameObject);
+            if (tile5x5.transform.GetChild(i) != null) {
+                GameObject childObj = tile5x5.transform.GetChild(i).gameObject;
+                _tilelist5x5.Add(childObj);
+            }
         }
         for (int i = 0; i < tile7x7.transform.childCount; i++) {
-            _tilelist7x7.Add(tile7x7.transform.GetChild(i).gameObject);
+            if (tile7x7.transform.GetChild(i) != null) {
+                GameObject childObj = tile7x7.transform.GetChild(i).gameObject;
+                _tilelist7x7.Add(childObj);
+            }
         }
         for (int i = 0; i < tile9x9.transform.childCount; i++) {
-            _tilelist9x9.Add(tile9x9.transform.GetChild(i).gameObject);
+            if (tile9x9.transform.GetChild(i) != null) {
+                GameObject childObj = tile9x9.transform.GetChild(i).gameObject;
+                _tilelist9x9.Add(childObj);
+            }
         }
 
         //foreach (Transform child in tile3x3.transform) {
@@ -117,6 +125,7 @@ public class PanelCreator : MonoBehaviour, IGridSizeListener {
         TileGridSetup(new Vector2Int(5, 5));
         startPanel = Instantiate(startPanelRef, canvasTransform);
         startPanel.transform.SetAsLastSibling();
+
         //IGridSizeListener listener = gameObject.GetComponent<IGridSizeListener>();
         //if (listener != null) {
         //    GridSizeNotifier notifier = GridSizeNotifier.Instance;  // Ensure you're getting the correct notifier

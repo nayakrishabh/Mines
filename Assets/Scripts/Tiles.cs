@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Tiles : MonoBehaviour {
+public class Tiles : MonoBehaviour ,INoOfBombsListener {
     
     public GameObject buttonTile;
 
@@ -26,20 +26,26 @@ public class Tiles : MonoBehaviour {
             instance = this;
         }
     }
-
+    private void OnDisable() {
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.UnregisterBlisteners(this);
+        }
+    }
     void Start() {
+
+        if (GridSizeNotifier.Instance != null) {
+            GridSizeNotifier.Instance.RegisterBlisteners(this);
+        }
+
         pC = PanelCreator.instance;
         noOfBomb = SelectionUIController.instance.SelectedBombCount;
         int sqL = SelectionUIController.instance.SelectedGridSize.x;
         noOfTiles = sqL*sqL;
     }
     void Update() {
-        noOfBomb = SelectionUIController.instance.SelectedBombCount;
 
         if (clickCount > 0) {
-            foreach (GameObject gameObject in tilelist) {
-                gameObject.GetComponent<Button>().interactable = false;
-            }
+            buttonIntractablityOff();
             UIController.Instance.onUIButton();
         }
 
@@ -47,13 +53,7 @@ public class Tiles : MonoBehaviour {
             SceneManager.LoadScene(0);
         }
     }
-
-    //public void startbuttoncoroutine(GameObject pO) {
-    //    panelObject = pO;
-    //    StartCoroutine(Buttontilecreator());
-    //}
     public void gameReset() {
-        restoreTiles();
         StartCoroutine(GameResetCoroutine());
     }
 
@@ -64,23 +64,108 @@ public class Tiles : MonoBehaviour {
 
     //ButtonTILECREATOR WTIH SHUFFLING LOGIC
     IEnumerator Buttontilecreator() {
-        ////Instanstiating the TileButtons
-        //for (int i = 0; i < noOfBomb; i++) {
-        //    GameObject tileobject = Instantiate(buttonTile);
-        //    tileobject.GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
-        //    tileobject.GetComponent<Button>().interactable=false;
-        //    tilelist.Add(tileobject);
-        //}
-        //for (int i = 0; i < noOfTiles - noOfBomb; i++) {
-        //    GameObject tileobject = Instantiate(buttonTile);
-        //    tileobject.GetComponent<Button>().interactable = false;
-        //    tilelist.Add(Instantiate(tileobject));
-        //}
 
-        // Clear the list (this only affects the list, not the child objects)
-        tilelist.Clear();
+        restoreTiles();
 
-        Debug.LogError(pC.selectedTile.name);
+        mainToTemp();
+
+        ShuffleBomb(tilelist);
+
+        AddListeners();
+
+        tempToMain();
+
+        yield return null;
+    }
+    
+    public void OnClick(GameObject tile) {
+        revel(tile);
+    }
+    private void restoreTiles() {
+        resetTiles();
+        clickCount = 0;
+    }
+
+    public void NoOfBombsChanged(int noOfBombs) {
+        noOfBomb = noOfBombs;
+        resetTiles();
+    }
+
+    #region BASIC LOGICS
+    private void ShuffleBomb(List<GameObject> tileList) {
+
+        foreach (GameObject tile in tileList) {
+            tile.GetComponent<ObjectTag>().objectType = ObjectTag.Type.DAIMOND;
+        }
+
+        HashSet<int> usedIndices = new HashSet<int>();
+
+        for (int i = 0; i < noOfBomb; i++) {
+            int randomIndex;
+            do {
+                randomIndex = Random.Range(0, tileList.Count);
+            } while (usedIndices.Contains(randomIndex));
+
+            usedIndices.Add(randomIndex);
+
+            tileList[randomIndex].GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
+            Debug.Log(tilelist[randomIndex].GetComponent<ObjectTag>().objectType);
+        }
+
+    }
+    public void setNoofTiles(int x) {
+        Debug.Log(x);
+        noOfTiles = x * x;
+    }
+    private void resetTiles() {
+        if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist3x3) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-5x5(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist5x5) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-7x7(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist7x7) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-9x9(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist9x9) {
+                gameObject.GetComponent<Image>().sprite = tileSprite;
+                gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
+            }
+        }
+    }
+    private void revel(GameObject tile) {
+        ObjectTag.Type type = tile.GetComponent<ObjectTag>().objectType;
+        if (clickCount == 0) {
+            if (type == ObjectTag.Type.BOMB) {
+                tile.GetComponent<Image>().sprite = bombSprite;
+                clickCount++;
+            }
+            else if (type == ObjectTag.Type.DAIMOND) {
+                tile.GetComponent<Image>().sprite = daimondSprite;
+            }
+        }
+        tile.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
+    }
+    private void AddListeners() {
+        foreach (var tile in tilelist) {
+            tile.GetComponent<Button>().onClick.RemoveAllListeners();
+            tile.GetComponent<Button>().onClick.AddListener(() => OnClick(tile));
+        }
+    }
+
+    #region OBJECT TRANSFER
+    private void mainToTemp() {
+
         if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
             tilelist.AddRange(pC.tilelist3x3);
             pC.tilelist3x3.Clear();
@@ -97,35 +182,11 @@ public class Tiles : MonoBehaviour {
             tilelist.AddRange(pC.tilelist9x9);
             pC.tilelist9x9.Clear();
         }
-
-        //Shuffling the List
-        Shufflelist(tilelist);
-        //Setting UP Parent
-
-
-
-        //if (panelObject.transform != null) {
-        //    foreach (GameObject tileobject in tilelist) {
-        //        if (tileobject != null) { 
-        //            tileobject.transform.SetParent(panelObject.transform);
-        //            tileobject.transform.localScale = Vector3.one;
-        //        }
-        //    }
-        //}
-        //for (int i = 0; i < tilelist.Count; i++) {
-        //    TextMeshProUGUI[] tmpComponents = tilelist[i].GetComponentsInChildren<TextMeshProUGUI>();
-        //    foreach (TextMeshProUGUI tmp in tmpComponents) {
-        //        tmp.enabled = false;
-        //    }
-        //}
-        AddListeners();
-
-        addToMainlist();
-
-        yield return null;
     }
+    private void tempToMain() {
 
-    private void addToMainlist() {
+        buttonIntractablityOn();
+
         if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
             pC.tilelist3x3 = tilelist;
             tilelist.Clear();
@@ -143,84 +204,38 @@ public class Tiles : MonoBehaviour {
             tilelist.Clear();
         }
     }
-    private void AddListeners() {
-        for (int i = 0; i < tilelist.Count; i++) {
-            int index = i; // Prevent closure issue
-            tilelist[index].GetComponent<Button>().onClick.RemoveAllListeners();
-            tilelist[index].GetComponent<Button>().onClick.AddListener(() => OnClick(index));
+    #endregion
+
+    #region BUTTON INTRACTABLITY
+    private void buttonIntractablityOn() {
+        foreach (var tile in tilelist) {
+            tile.GetComponent<Button>().interactable = true;
         }
     }
-    public void OnClick(int index) {
-        
-            ObjectTag objectTag = tilelist[index].GetComponent<ObjectTag>();
+    private void buttonIntractablityOff() {
 
-            revel(objectTag.objectType, index);
-
-            Debug.LogError("Button no = " + index +" "+ objectTag.objectType);
-        
-    }
-    public void restoreTiles() {
-        Debug.LogError(tilelist.Count);
-        resetTiles();
-        tilelist.Clear();
-        clickCount = 0;
-    }
-    //revel Logic
-    private void revel(ObjectTag.Type type, int index) {
-        if (clickCount == 0) {
-            if (type == ObjectTag.Type.BOMB) {
-                tilelist[index].GetComponent<Image>().sprite = bombSprite;
-                clickCount++;
-            }
-            else if (type == ObjectTag.Type.DAIMOND) {
-                tilelist[index].GetComponent<Image>().sprite = daimondSprite;
+        if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist3x3) {
+                gameObject.GetComponent<Button>().interactable = false;
             }
         }
-        tilelist[index].GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
+        else if (pC.selectedTile.name == "SquarePanel-5x5(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist5x5) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-7x7(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist7x7) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
+        else if (pC.selectedTile.name == "SquarePanel-9x9(Clone)") {
+            foreach (GameObject gameObject in pC.tilelist9x9) {
+                gameObject.GetComponent<Button>().interactable = false;
+            }
+        }
     }
+    #endregion
 
-    private void resetTiles() {
-        foreach (GameObject gO in tilelist) {
-            gO.GetComponent<Image>().sprite = tileSprite;
-            gO.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
-        }
-    }
-    //Shuffle Logic
-    private List<GameObject> Shufflelist(List<GameObject> Tilelist) {
-        for (int i = 0; i < (Tilelist.Count - 1); i++) {
-            Debug.Log(Tilelist[i].GetComponent<ObjectTag>().objectType);
-            var r =  Random.Range(i, Tilelist.Count);
-            var temp = Tilelist[i];
-            Tilelist[i] = Tilelist[r];
-            Tilelist[r] = temp;
-        }
-        return Tilelist;
-    }
-    
-    public List<GameObject> getList() {
-        return tilelist;
-    }
-    public void tileInactive() {
-        foreach (GameObject gameObject in tilelist) {
-            gameObject.GetComponent<Button>().interactable = false;
-        }
-    }
-    public void tileActive() {
-        foreach (GameObject gameObject in tilelist) {
-            gameObject.GetComponent<Button>().interactable = true;
-        }
-    }
-    public void setNoofTiles(int x) {
-        Debug.Log(x);
-        noOfTiles = x * x;
-    }
+    #endregion
 }
-//public void hidetiles() {
-//    foreach (GameObject gameObject in tilelist) {
-//        if (gameObject.GetComponent<ObjectTag>().revelType == ObjectTag.RevelType.REVELED) {
-//            gameObject.GetComponent<Image>().sprite = tileSprite;
-//            gameObject.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.UNREVELED;
-//            clickCount = 0;
-//        }
-//    }
-//}
