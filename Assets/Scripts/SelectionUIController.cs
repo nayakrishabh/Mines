@@ -18,15 +18,19 @@ public class SelectionUIController : MonoBehaviour
     private Button selectedGridSizeButton;
     private Button selectedBombButton;
     private TMP_InputField selectedInputField = null;
-
+    private TextMeshProUGUI mulitplierText;
 
     private void Awake() {
         if (instance == null) {
             instance = this;
         }
+        mulitplierText = connector.multiplierText;
     }
     void Start()
     {
+
+        
+        Debug.Log(connector.multiplierText.text);
         gridBombOption();
         addListenersAndSetText();
         NotifyGridSize(new Vector2Int(5, 5));
@@ -253,6 +257,8 @@ public class SelectionUIController : MonoBehaviour
     }
     public Vector2Int SelectedGridSize { get { return _selectedGridSize; } }
     public int SelectedBombCount { get { return _selectedBombCount; } }
+
+    public TextMeshProUGUI MultiplierText { get { return mulitplierText; } }
     void Update()
     {
         

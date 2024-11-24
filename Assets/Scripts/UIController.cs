@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class UIController : MonoBehaviour
 
     [SerializeField] private UiConnector connector;
 
+    private TextMeshProUGUI multiplierText;
     private GameObject startpanelcomp;
     private float betAmount = 1f;
     private void Awake() {
@@ -21,6 +23,7 @@ public class UIController : MonoBehaviour
     {
         addListeners();
         startpanelcomp = PanelCreator.instance.getStartPanel();
+        multiplierText = SelectionUIController.instance.MultiplierText;
     }
     
     private void addListeners() {
@@ -35,6 +38,8 @@ public class UIController : MonoBehaviour
         Tiles.instance.gameReset();
         offUIButton();
         GameManager.instance.setbalance(-betAmount);
+        MultiplierCalculator.ResetMultiplier();
+        multiplierText.text = $"{MultiplierCalculator.getCalculatedMultiplier()}x";
     }
 
     #region INPUT HANDLER

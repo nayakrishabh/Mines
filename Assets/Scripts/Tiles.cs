@@ -14,6 +14,8 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
 
     private int uid, noOfBomb = 1, noOfTiles,clickCount = 0;
 
+    private TextMeshProUGUI multiplierText = new TextMeshProUGUI();
+
     private List<GameObject> tilelist = new List<GameObject>();
 
     private PanelCreator pC;
@@ -40,6 +42,7 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
         pC = PanelCreator.instance;
         noOfBomb = SelectionUIController.instance.SelectedBombCount;
         int sqL = SelectionUIController.instance.SelectedGridSize.x;
+        multiplierText = SelectionUIController.instance.MultiplierText;
         noOfTiles = sqL*sqL;
     }
     void Update() {
@@ -47,10 +50,13 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
         if (clickCount > 0) {
             buttonIntractablityOff();
             UIController.Instance.onUIButton();
+            MultiplierCalculator.ResetSafeCellsRevealed();
+            multiplierText.text = $"{MultiplierCalculator.getCalculatedMultiplier()}x";
         }
 
         if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(0);
+            MultiplierCalculator.ResetSafeCellsRevealed();
         }
     }
     public void gameReset() {
@@ -80,6 +86,9 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
     
     public void OnClick(GameObject tile) {
         revel(tile);
+        Debug.Log(multiplierText.text);
+        MultiplierCalculator.CalculateMultiplier();
+        multiplierText.text = $"{MultiplierCalculator.getCalculatedMultiplier()}x";
     }
     private void restoreTiles() {
         resetTiles();
@@ -152,6 +161,7 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
             }
             else if (type == ObjectTag.Type.DAIMOND) {
                 tile.GetComponent<Image>().sprite = daimondSprite;
+                MultiplierCalculator.IncrementSafeCellsRevealed();
             }
         }
         tile.GetComponent<ObjectTag>().revelType = ObjectTag.RevelType.REVELED;
