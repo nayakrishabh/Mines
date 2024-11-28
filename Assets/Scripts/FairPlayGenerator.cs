@@ -13,12 +13,6 @@ public class FairPlayGenerator : MonoBehaviour
     }
 
     public float getFairFactor(int step) {
-        string input = sessionSeed + ":" + step;
-
-        using(SHA256 sha256 = SHA256.Create()) {
-            byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-            int hashValue = System.BitConverter.ToInt32(hash, 0);
-            return 0.05f + (Mathf.Abs(hashValue % 100) / 1000.0f);
-        }
+        return 0.05f + (step * 0.002f);
     }
 }
