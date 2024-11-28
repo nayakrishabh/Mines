@@ -12,4 +12,6 @@ public class UiConnector : MonoBehaviour
     public Button minusButton;
     public TMP_InputField BetAmountInput;
     public Button betButton;
+    public Button collectButton;
+    public TextMeshProUGUI collectWinAmount;
 }

@@ -14,6 +14,8 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI multiplierText;
     private GameObject startpanelcomp;
     private float betAmount = 1f;
+    private float winAmount = 0f;
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -32,6 +34,7 @@ public class UIController : MonoBehaviour
         connector.plusButton.onClick.AddListener(valueIncreased);
         connector.minusButton.onClick.AddListener(valuedecreased);
         connector.betButton.onClick.AddListener(applyBet);
+        connector.collectButton.onClick.AddListener(collectWins);
     }
 
     private void applyBet() {
@@ -40,6 +43,16 @@ public class UIController : MonoBehaviour
         GameManager.instance.setbalance(-betAmount);
         MultiplierCalculator.ResetMultiplier();
         multiplierText.text = $"{MultiplierCalculator.getCalculatedMultiplier()}x";
+    }
+    
+    private void collectWins() {
+        winAmount = GameManager.instance.getCalculatedWinAmount();
+        Tiles.instance.gameReset();
+        GameManager.instance.setbalance(winAmount);
+        connector.winsText.text = $"Wins : {winAmount}";
+        onUiButtonAC();
+        GameManager.instance.resetWinAmount();
+        winAmount = 0f;
     }
 
     #region INPUT HANDLER
@@ -81,6 +94,7 @@ public class UIController : MonoBehaviour
     {
         connector.balanceText.text = $"Balance : \n {GameManager.instance.getbalance()}";
         connector.winsText.text = $"Wins : 0";
+        connector.collectWinAmount.GetComponent<TextMeshProUGUI>().text = $"Collect \n {GameManager.instance.getCalculatedWinAmount()}";
         //connector.winsText.text = $"Wins : 0 \n {GameManager.instance.getbalance()}";
     }
     private void offUIButton() {
@@ -88,14 +102,28 @@ public class UIController : MonoBehaviour
         connector.plusButton.GetComponent<Button>().interactable = false;
         connector.minusButton.GetComponent<Button>().interactable = false;
         connector.BetAmountInput.interactable = false;
-        connector.betButton.interactable=false;
+        connector.betButton.gameObject.SetActive(false);
+        connector.collectButton.gameObject.SetActive(true);
         SelectionUIController.instance.setUIOff();
     }
     public void onUIButton() {
         connector.plusButton.GetComponent<Button>().interactable = true;
         connector.minusButton.GetComponent<Button>().interactable = true;
         connector.BetAmountInput.interactable = true;
-        connector.betButton.interactable = true;
+        connector.betButton.gameObject.SetActive(true);
+        connector.collectButton.gameObject.SetActive(false);
         SelectionUIController.instance.setUIOn();
+    }
+    public void onUiButtonAC() {
+        connector.plusButton.GetComponent<Button>().interactable = true;
+        connector.minusButton.GetComponent<Button>().interactable = true;
+        connector.BetAmountInput.interactable = true;
+        connector.betButton.gameObject.SetActive(true);
+        connector.collectButton.gameObject.SetActive(false);
+        SelectionUIController.instance.setUIOn();
+        Tiles.instance.buttonIntractablityOff();
+    }
+    public float getBetAmount() {
+        return betAmount;
     }
 }

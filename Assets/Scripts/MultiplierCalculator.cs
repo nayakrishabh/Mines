@@ -50,10 +50,12 @@ public class MultiplierCalculator : MonoBehaviour , IGridSizeListener ,INoOfBomb
         float fairFactor = 1 + (fairPlayGenerator.getFairFactor(safeCellsRevealed));
 
         float bombFactor = Mathf.Max(1.0f, Mathf.Log10(noofBombsM + 1));
-        float tileFactor = Mathf.Sqrt(gridSizeFormul);
+        float tileFactor = (Mathf.Sqrt(gridSizeFormul * 0.1f));
         float safeFactor = 1 + (safeCellsRevealed  * 0.15f);
 
-        float calculatedMultiplier = baseMultiplier * bombFactor * tileFactor * safeFactor * fairFactor;
+        float calculatedMultiplier = baseMultiplier * tileFactor * safeFactor * fairFactor;
+
+        //float calculatedMultiplier = baseMultiplier * bombFactor * tileFactor * safeFactor * fairFactor;
 
         calculatedMultiplier = Mathf.Max(calculatedMultiplier, baseMultiplier);
 

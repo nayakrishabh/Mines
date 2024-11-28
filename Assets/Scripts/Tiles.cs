@@ -118,7 +118,6 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
             usedIndices.Add(randomIndex);
 
             tileList[randomIndex].GetComponent<ObjectTag>().objectType = ObjectTag.Type.BOMB;
-            Debug.Log(tilelist[randomIndex].GetComponent<ObjectTag>().objectType);
         }
 
     }
@@ -222,7 +221,7 @@ public class Tiles : MonoBehaviour ,INoOfBombsListener {
             tile.GetComponent<Button>().interactable = true;
         }
     }
-    private void buttonIntractablityOff() {
+    public void buttonIntractablityOff() {
 
         if (pC.selectedTile.name == "SquarePanel-3x3(Clone)") {
             foreach (GameObject gameObject in pC.tilelist3x3) {
